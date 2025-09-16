@@ -126,7 +126,7 @@ export default function SimpleShapeMap() {
   }, [allPanels]);
 
   const openCreateModal = () => {
-    setSelectedPanelId(allPanelOptions[0]?.value || "");
+    setSelectedPanelId("");
     setSelectedIsFaulty(false);
     setIsModalOpen(true);
   };
@@ -197,9 +197,13 @@ export default function SimpleShapeMap() {
                 </label>
                 <select
                   value={selectedPanelId}
-                  onChange={(e) => setSelectedPanelId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedPanelId(e.target.value);
+                    setSelectedIsFaulty(faultyMap[e.target.value]);
+                  }}
                   style={{ width: "100%", padding: 8 }}
                 >
+                  <option value={""}>please select a panel</option>
                   {allPanelOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
@@ -269,7 +273,7 @@ export default function SimpleShapeMap() {
           pathOptions={{
             color: "blue",
             fillColor: "green",
-            fillOpacity: 0.9,
+            fillOpacity: 0.95,
           }}
         />
 
