@@ -1,5 +1,21 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Normal panels – subtle shadow */
+.leaflet-glow-box {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Faulty panels – shiny glow */
+.leaflet-faulty {
+  filter: drop-shadow(0 0 6px #ecbab2) drop-shadow(0 0 12px #ecbab2);
+}
+
+/* Outer boundary glow */
+.leaflet-glow-panel {
+  filter: drop-shadow(0 0 15px rgba(255, 102, 0, 0.6));
 }

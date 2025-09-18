@@ -26,6 +26,11 @@ import {
   angleR5,
 } from "./data/data";
 
+// const LAT_SHIFT = 0;
+// const LNG_SHIFT = 0; // ~1m west
+
+const LAT_SHIFT = -0.00001;
+const LNG_SHIFT = 0.00005; // ~1m west
 export default function SimpleShapeMap() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPanelId, setSelectedPanelId] = useState("");
@@ -76,12 +81,12 @@ export default function SimpleShapeMap() {
 
     return Array.from({ length: cols }, (_, c) => {
       const southWest = [
-        minLat + spacingLat,
-        minLng + c * lngStep + spacingLng,
+        minLat + spacingLat + LAT_SHIFT,
+        minLng + c * lngStep + spacingLng + LNG_SHIFT,
       ];
       const northEast = [
-        minLat + latStep - spacingLat,
-        minLng + (c + 1) * lngStep - spacingLng,
+        minLat + latStep - spacingLat + LAT_SHIFT,
+        minLng + (c + 1) * lngStep - spacingLng + LNG_SHIFT,
       ];
       return {
         id: `C${c + 1}`,
@@ -103,6 +108,7 @@ export default function SimpleShapeMap() {
     { coords: angle9, cols: 23 },
     { coords: angle10, cols: 23 },
     { coords: angle11, cols: 15 },
+    // { coords: angle12, cols: 31 },
     { coords: angleR1, cols: 23 },
     { coords: angleR2, cols: 23 },
     { coords: angleR3, cols: 23 },
@@ -259,21 +265,23 @@ export default function SimpleShapeMap() {
         center={center}
         zoom={19}
         style={{ height: "100vh", width: "100%" }}
-        maxZoom={22}
+        maxZoom={19}
       >
         <TileLayer
-          url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-          attribution="&copy; <a href='https://www.google.com/maps'>Google</a>"
-          maxZoom={23}
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          attribution='Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; 
+    Source: Esri, Earthstar Geographics, NASA, USGS, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
+          maxZoom={19}
         />
 
         {/* Outer Boundary */}
         <Polygon
           positions={rectangleCoords}
           pathOptions={{
-            color: "blue",
-            fillColor: "green",
-            fillOpacity: 0.95,
+            color: "#F14A00",
+            weight: 4,
+            fillColor: "#FE7743",
+            fillOpacity: 0.6,
           }}
         />
 
@@ -282,19 +290,35 @@ export default function SimpleShapeMap() {
           grid.map((panel) => {
             const uniqueId = `${gIdx}-${panel.id}`;
             const isFaulty = Boolean(faultyMap[uniqueId]);
-            return (
+            return isFaulty ? (
               <Rectangle
-                key={`grid-${gIdx}-${panel.id}`}
+                key={`faulty-${gIdx}-${panel.id}`}
                 bounds={panel.bounds}
                 pathOptions={{
-                  color: isFaulty ? "#b91c1c" : "black",
-                  weight: 0.5,
-                  fillColor: isFaulty ? "#ef4444" : "#6d8ff1",
-                  fillOpacity: 0.8,
+                  color: "#ecbab2",
+                  weight: 1,
+                  fillColor: "#ecbab2",
+                  fillOpacity: 0.9,
                 }}
-                eventHandlers={{
-                  click: () => openEditModal(uniqueId),
+                className="leaflet-faulty"
+                eventHandlers={{ click: () => openEditModal(uniqueId) }}
+              >
+                <Tooltip>
+                  Grid {gIdx + 1} - {panel.id}
+                </Tooltip>
+              </Rectangle>
+            ) : (
+              <Rectangle
+                key={`normal-${gIdx}-${panel.id}`}
+                bounds={panel.bounds}
+                pathOptions={{
+                  color: "#642b6c",
+                  weight: 1,
+                  fillColor: "#642b6c",
+                  fillOpacity: 0.9,
                 }}
+                className="leaflet-glow-box"
+                eventHandlers={{ click: () => openEditModal(uniqueId) }}
               >
                 <Tooltip>
                   Grid {gIdx + 1} - {panel.id}
