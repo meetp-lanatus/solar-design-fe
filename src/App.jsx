@@ -1,9 +1,9 @@
-import SolarSubPanelsMap from "./SolarSubPanelsMap";
+import SolarMap from "./components/Solarmap";
 
 function App() {
   return (
     <>
-      <SolarSubPanelsMap />
+      <SolarMap />
     </>
   );
 }

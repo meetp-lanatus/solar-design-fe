@@ -35,6 +35,8 @@ export default function SimpleShapeMap() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPanelId, setSelectedPanelId] = useState("");
   const [selectedIsFaulty, setSelectedIsFaulty] = useState(false);
+  const [mapRef, setMapRef] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const [faultyMap, setFaultyMap] = useState(() => {
     try {
       const raw = localStorage.getItem("faultyPanels");
@@ -43,6 +45,33 @@ export default function SimpleShapeMap() {
       return {};
     }
   });
+
+  const handleSearch = async () => {
+    const q = searchText.trim();
+    if (!q) return;
+    // Support comma or space between lat and lng
+    const coordMatch = q.match(/^\s*(-?\d{1,2}\.\d+)\s*(?:,|\s)\s*(-?\d{1,3}\.\d+)\s*$/);
+    if (coordMatch) {
+      const lat = parseFloat(coordMatch[1]);
+      const lng = parseFloat(coordMatch[2]);
+      if (mapRef) {
+        mapRef.setView([lat, lng], Math.max(17, mapRef.getZoom()));
+      }
+      return;
+    }
+    // Fallback to Nominatim geocoding
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`;
+      const res = await fetch(url, { headers: { "Accept": "application/json" } });
+      const data = await res.json();
+      if (data && data.length && mapRef) {
+        const { lat, lon } = data[0];
+        mapRef.setView([parseFloat(lat), parseFloat(lon)], 17);
+      }
+    } catch (_) {
+      // ignore
+    }
+  };
 
   useEffect(() => {
     try {
@@ -156,6 +185,17 @@ export default function SimpleShapeMap() {
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
+      <div style={{ position: "absolute", zIndex: 1000, top: 12, left: 12, display: "flex", gap: 8, alignItems: "center" }}>
+        <input
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search place or 23.27,72.68"
+          style={{ padding: "8px 10px", width: 260, borderRadius: 6, border: "1px solid #d1d5db" }}
+          onKeyDown={async (e) => { if (e.key === "Enter") { e.preventDefault(); handleSearch(); } }}
+        />
+        <button onClick={handleSearch} style={{ padding: "8px 12px", background: "#0ea5e9", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>Search</button>
+        <div style={{ flex: 1 }} />
+      </div>
       <div style={{ position: "absolute", zIndex: 1000, top: 12, right: 12 }}>
         <button
           onClick={openCreateModal}
@@ -266,6 +306,7 @@ export default function SimpleShapeMap() {
         zoom={19}
         style={{ height: "100vh", width: "100%" }}
         maxZoom={19}
+        whenCreated={(m) => setMapRef(m)}
       >
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
