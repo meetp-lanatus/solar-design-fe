@@ -1,17 +1,17 @@
-import L from "leaflet";
-import { useMemo, useRef } from "react";
-import { Marker, Polygon, Tooltip, useMap } from "react-leaflet";
+import L from 'leaflet';
+import { useMemo, useRef } from 'react';
+import { Marker, Polygon, Tooltip, useMap } from 'react-leaflet';
 
-const createHandleIcon = (size = 10, color = "#ef4444") =>
+const createHandleIcon = (size = 10, color = '#ef4444') =>
   L.divIcon({
-    className: "",
+    className: '',
     html: `<div style="width:${size}px;height:${size}px;background:${color};border:1px solid #111;border-radius:2px;"></div>`,
     iconAnchor: [size / 2, size / 2],
   });
 
 const createRotateIcon = () =>
   L.divIcon({
-    className: "",
+    className: '',
     html: `<div style="width:16px;height:16px;background:orange;border:2px solid white;border-radius:50%"></div>`,
     iconAnchor: [8, 8],
   });
@@ -58,7 +58,7 @@ export const OverlayGeo = ({
     rotate,
     panelRows = 4,
     panelCols = 5,
-    shape = "rect",
+    shape = 'rect',
     sides = 6,
   } = overlay;
   const map = useMap();
@@ -88,6 +88,16 @@ export const OverlayGeo = ({
     return metersToLatLng(position, x, y);
   }, [position, heightMeters, widthMeters, rotate]);
 
+  // Delete handle placed opposite the rotation handle at the same offset
+  const deleteHandleLatLng = useMemo(() => {
+    // Place slightly outside polygon with a small, consistent margin
+    const offset =
+      heightMeters / 2 +
+      Math.max(1.5, Math.min(6, Math.max(widthMeters, heightMeters) * 0.1));
+    const { x, y } = rotatePoint(0, offset, rotate);
+    return metersToLatLng(position, x, y);
+  }, [position, heightMeters, widthMeters, rotate]);
+
   if (!map) return null;
 
   return (
@@ -95,10 +105,11 @@ export const OverlayGeo = ({
       <Polygon
         positions={corners}
         pathOptions={{
-          color: selected === id ? "#22c55e" : "#111827",
+          color: selected === id ? '#22c55e' : '#111827',
           weight: 2,
           fillOpacity: 0.15,
         }}
+        className="leaflet-glow-box"
         eventHandlers={{
           click: (e) => {
             e.originalEvent.stopPropagation();
@@ -117,6 +128,13 @@ export const OverlayGeo = ({
             <div>
               Center: {position[0].toFixed(6)}, {position[1].toFixed(6)}
             </div>
+            <div>
+              Size: {widthMeters.toFixed(2)} m × {heightMeters.toFixed(2)} m
+            </div>
+            <div>
+              Perimeter: {(2 * (widthMeters + heightMeters)).toFixed(2)} m
+            </div>
+            <div>Area: {(widthMeters * heightMeters).toFixed(2)} m²</div>
           </div>
         </Tooltip>
       </Polygon>
@@ -126,7 +144,7 @@ export const OverlayGeo = ({
         <Marker
           position={position}
           draggable
-          icon={createHandleIcon(12, "#2563eb")}
+          icon={createHandleIcon(12, '#2563eb')}
           eventHandlers={{
             dragend: (e) => {
               const ll = e.target.getLatLng();
@@ -147,7 +165,7 @@ export const OverlayGeo = ({
             key={`corner-${id}-${idx}`}
             position={latlng}
             draggable
-            icon={createHandleIcon(10, "#FFFFFF")}
+            icon={createHandleIcon(10, '#FFFFFF')}
             eventHandlers={{
               dragend: (e) => {
                 const ll = e.target.getLatLng();
@@ -206,12 +224,12 @@ export const OverlayGeo = ({
 
               const upHandler = () => {
                 rotatingRef.current = false;
-                window.removeEventListener("mousemove", moveHandler);
-                window.removeEventListener("mouseup", upHandler);
+                window.removeEventListener('mousemove', moveHandler);
+                window.removeEventListener('mouseup', upHandler);
               };
 
-              window.addEventListener("mousemove", moveHandler);
-              window.addEventListener("mouseup", upHandler);
+              window.addEventListener('mousemove', moveHandler);
+              window.addEventListener('mouseup', upHandler);
             },
             click: () => setSelected(id),
           }}
@@ -221,14 +239,23 @@ export const OverlayGeo = ({
       {/* Delete button */}
       {selected === id && (
         <Marker
-          position={metersToLatLng(
-            position,
-            widthMeters / 2 + 6,
-            heightMeters / 2 + 6
-          )}
+          position={deleteHandleLatLng}
           icon={L.divIcon({
-            className: "",
-            html: `<button style=\"padding:4px 8px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer\">Delete</button>`,
+            className: '',
+            html: `<button
+              style="
+                padding:6px 12px;
+                background:rgba(243,244,246,0.95);
+                color:#111827;
+                border:1px solid #d1d5db;
+                border-radius:9999px;
+                box-shadow:0 1px 2px rgba(0,0,0,0.12);
+                cursor:pointer;
+                backdrop-filter:saturate(180%) blur(2px);
+              "
+              onmouseenter="this.style.background='rgba(229,231,235,0.98)';"
+              onmouseleave="this.style.background='rgba(243,244,246,0.95)';"
+            >Delete</button>`,
             iconAnchor: [0, 0],
           })}
           eventHandlers={{
@@ -241,7 +268,7 @@ export const OverlayGeo = ({
       )}
 
       {/* Grid of inner rectangles (panels) - only for rectangular shape */}
-      {shape !== "polygon" &&
+      {shape !== 'polygon' &&
         (() => {
           const cellW = widthMeters / panelCols;
           const cellH = heightMeters / panelRows;
@@ -270,9 +297,9 @@ export const OverlayGeo = ({
                   key={`panel-${id}-${r}-${c}`}
                   positions={cornersLatLng}
                   pathOptions={{
-                    color: "#ffffff ",
+                    color: '#ffffff ',
                     weight: 1,
-                    fillColor: "#4677C7",
+                    fillColor: '#4677C7',
                     fillOpacity: 1,
                   }}
                   eventHandlers={{

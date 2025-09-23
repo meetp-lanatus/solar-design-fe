@@ -1,9 +1,9 @@
 // SearchControl.jsx
-import { useEffect, useRef } from "react";
-import { useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet-control-geocoder";
-import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+import { useEffect, useRef } from 'react';
+import { useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet-control-geocoder';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 export default function SearchControl() {
   const map = useMap();
@@ -17,10 +17,10 @@ export default function SearchControl() {
     const geocoder = L.Control.geocoder({
       geocoder: L.Control.Geocoder.photon(),
       defaultMarkGeocode: false,
-      placeholder: "Search by place, address, or pincode…",
+      placeholder: 'Search by place, address, or pincode…',
       collapsed: false,
     })
-      .on("markgeocode", function (e) {
+      .on('markgeocode', function (e) {
         const latlng = e.geocode.center;
         map.flyTo(latlng, 18);
         L.marker(latlng).addTo(map);
@@ -51,17 +51,17 @@ export default function SearchControl() {
   return (
     <div
       style={{
-        position: "absolute",
-        top: "10px",
-        left: "50%",
-        transform: "translateX(-50%)",
+        position: 'absolute',
+        top: '10px',
+        left: '50%',
+        transform: 'translateX(-50%)',
         zIndex: 1000,
-        background: "white",
-        padding: "6px",
-        borderRadius: "6px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-        display: "flex",
-        gap: "6px",
+        background: 'white',
+        padding: '6px',
+        borderRadius: '6px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+        display: 'flex',
+        gap: '6px',
       }}
     >
       <input
@@ -69,16 +69,16 @@ export default function SearchControl() {
         type="number"
         step="0.0001"
         placeholder="Latitude"
-        style={{ padding: "4px" }}
+        style={{ padding: '4px' }}
       />
       <input
         ref={lngRef}
         type="number"
         step="0.0001"
         placeholder="Longitude"
-        style={{ padding: "4px" }}
+        style={{ padding: '4px' }}
       />
-      <button onClick={handleLatLngSearch} style={{ padding: "4px 8px" }}>
+      <button onClick={handleLatLngSearch} style={{ padding: '4px 8px' }}>
         Go
       </button>
     </div>

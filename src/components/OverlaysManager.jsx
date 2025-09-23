@@ -1,72 +1,62 @@
-import { useMap } from "react-leaflet";
-export const OverlaysManager = ({
-  overlays,
-  updateOverlay,
-  addOverlay,
-  removeOverlay,
-  selected,
-  setSelected,
-}) => {
+import { useMap } from 'react-leaflet';
+export const OverlaysManager = ({ addOverlay }) => {
   const map = useMap();
 
-  // "Add overlay at center" button uses map.getCenter()
-  const onAdd = () => {
+  // Expose an imperative add-at-center for Sidebar to use
+  // We attach a function on window so Sidebar can trigger it without prop drilling
+  window.__solarMapAddOverlayAtCenter__ = (
+    rows = 4,
+    cols = 5,
+    widthMeters,
+    heightMeters
+  ) => {
     const c = map.getCenter();
-    const rows = parseInt(
-      document.getElementById("rows-input")?.value || "4",
-      10
-    );
-    const cols = parseInt(
-      document.getElementById("cols-input")?.value || "5",
-      10
-    );
-    addOverlay([c.lat, c.lng], Math.max(1, rows), Math.max(1, cols));
+    const safeRows = Math.max(1, parseInt(rows, 10) || 4);
+    const safeCols = Math.max(1, parseInt(cols, 10) || 5);
+    const w =
+      widthMeters === '' || widthMeters == null
+        ? undefined
+        : parseFloat(widthMeters);
+    const h =
+      heightMeters === '' || heightMeters == null
+        ? undefined
+        : parseFloat(heightMeters);
+
+    addOverlay([c.lat, c.lng], safeRows, safeCols, w, h);
+
+    // If a small overlay size is specified, auto-zoom so the shape is clearly visible
+    try {
+      const center = { lat: c.lat, lng: c.lng };
+      const meters = Math.max(w || 0, h || 0);
+      if (meters > 0) {
+        // Compute pixels per meter at current zoom by comparing two points 1m apart east-west
+        const lat = center.lat;
+        const metersPerDegLng = 111320 * Math.cos((lat * Math.PI) / 180);
+        const dLngFor1m = 1 / metersPerDegLng; // 1 meter east
+        const p0 = map.latLngToContainerPoint(center);
+        const p1 = map.latLngToContainerPoint({
+          lat: center.lat,
+          lng: center.lng + dLngFor1m,
+        });
+        const pxPerMeter = Math.max(
+          0.0001,
+          Math.hypot(p1.x - p0.x, p1.y - p0.y)
+        );
+
+        const targetPx = 160; // aim for ~160px for the longest side
+        const currentPx = meters * pxPerMeter;
+        const scale = targetPx / currentPx;
+        if (scale > 1.05 || scale < 0.95) {
+          const currentZoom = map.getZoom();
+          const deltaZoom = Math.log2(Math.max(0.25, Math.min(4, scale)));
+          const newZoom = Math.max(16, Math.min(21, currentZoom + deltaZoom));
+          map.setZoomAround(center, newZoom);
+        }
+      }
+    } catch (_) {}
   };
 
   return (
-    <>
-      <div
-        id="overlay-controls"
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 100,
-          zIndex: 2000,
-          display: "flex",
-          gap: 8,
-          alignItems: "center",
-          background: "rgba(255,255,255,0.9)",
-          padding: 8,
-          borderRadius: 8,
-        }}
-      >
-        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          Rows
-          <input
-            id="rows-input"
-            type="number"
-            min={1}
-            defaultValue={4}
-            style={{ width: 64, padding: 4 }}
-          />
-        </label>
-        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          Cols
-          <input
-            id="cols-input"
-            type="number"
-            min={1}
-            defaultValue={5}
-            style={{ width: 64, padding: 4 }}
-          />
-        </label>
-        <button
-          onClick={onAdd}
-          style={{ padding: "8px 12px", borderRadius: 6 }}
-        >
-          Add Overlay
-        </button>
-      </div>
-    </>
+    <>{/* Floating controls removed; Sidebar drives overlay creation */}</>
   );
 };
