@@ -1,4 +1,5 @@
 import { useMap } from 'react-leaflet';
+import L from 'leaflet';
 export const OverlaysManager = ({ addOverlay }) => {
   const map = useMap();
 
@@ -53,7 +54,28 @@ export const OverlaysManager = ({ addOverlay }) => {
           map.setZoomAround(center, newZoom);
         }
       }
-    } catch (_) {}
+    } catch (_) { }
+  };
+
+  // Expose a general fly-to helper for Sidebar search/latlng controls
+  window.__solarMapFlyTo__ = (lat, lng, zoom = 18) => {
+    try {
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        const target = { lat, lng };
+        const z = Math.max(zoom || 0, map.getZoom());
+        map.flyTo(target, Math.min(21, z), {
+          animate: true,
+          duration: 1.2,
+        });
+        // Optional: drop a transient marker without managing state
+        // Avoid stacking too many markers: reuse a single temp marker
+        if (!window.__solarTempMarker__) {
+          window.__solarTempMarker__ = L.marker(target).addTo(map);
+        } else {
+          window.__solarTempMarker__.setLatLng(target);
+        }
+      }
+    } catch (_) { }
   };
 
   return (
