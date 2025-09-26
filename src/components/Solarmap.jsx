@@ -4,6 +4,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { MapBehavior } from './MapBehavior';
 import { OverlayGeo } from './OverlayGeo';
 import { OverlaysManager } from './OverlaysManager';
+import MovableMarker from './MovableMarker';
 
 export default function SolarMap() {
   // (No longer generating random inner rects; grid panels are computed in OverlayGeo)
@@ -16,20 +17,19 @@ export default function SolarMap() {
     return [];
   });
   const [selected, setSelected] = useState(null);
+  const [markers, setMarkers] = useState(() => {
+    try {
+      const raw = localStorage.getItem('solar_demo_markers');
+      if (raw) return JSON.parse(raw);
+    } catch (_) {}
+    return [];
+  });
 
   const updateOverlay = (id, changes) => {
-    setOverlays((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, ...changes } : o))
-    );
+    setOverlays((prev) => prev.map((o) => (o.id === id ? { ...o, ...changes } : o)));
   };
 
-  const addOverlay = (
-    mapCenter,
-    rows = 4,
-    cols = 5,
-    widthMetersArg,
-    heightMetersArg
-  ) => {
+  const addOverlay = (mapCenter, rows = 4, cols = 5, widthMetersArg, heightMetersArg) => {
     setOverlays((prev) => [
       ...prev,
       {
@@ -58,12 +58,90 @@ export default function SolarMap() {
     setSelected((s) => (s === id ? null : s));
   };
 
+  const addMarker = (marker) => {
+    setMarkers((prev) => {
+      // Check if marker with same ID already exists
+      const exists = prev.some((m) => m.id === marker.id);
+      if (exists) {
+        return prev; // Don't add duplicate
+      }
+      return [...prev, marker];
+    });
+  };
+
+  const updateMarker = (id, newPosition) => {
+    setMarkers((prev) =>
+      prev.map((marker) =>
+        marker.id === id
+          ? { ...marker, ...newPosition, timestamp: new Date().toISOString() }
+          : marker
+      )
+    );
+  };
+
+  const removeMarker = (id) => {
+    setMarkers((prev) => prev.filter((marker) => marker.id !== id));
+  };
+
+  const clearMarkers = () => {
+    setMarkers([]);
+  };
+
+  const flyToMarker = (id) => {
+    const marker = markers.find((m) => m.id === id);
+    if (marker && window.__solarMapFlyTo__) {
+      window.__solarMapFlyTo__(marker.lat, marker.lng, 18);
+    }
+  };
+
   // persist overlays to localStorage
   useEffect(() => {
     try {
       localStorage.setItem('geoOverlays', JSON.stringify(overlays));
     } catch (_) {}
   }, [overlays]);
+
+  // persist markers to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('solar_demo_markers', JSON.stringify(markers));
+    } catch (_) {}
+  }, [markers]);
+
+  // Expose functions to global scope for sidebar integration
+  useEffect(() => {
+    window.__solarMapAddMarker__ = addMarker;
+    window.__solarMapRemoveMarker__ = removeMarker;
+    window.__solarMapClearMarkers__ = clearMarkers;
+    window.__solarMapFlyToMarker__ = flyToMarker;
+    window.__solarMapGetMarkers__ = () => markers;
+
+    // Clean up any duplicate markers on initialization
+    const cleanupDuplicates = () => {
+      const uniqueMarkers = markers.reduce((acc, marker) => {
+        const exists = acc.some((m) => m.id === marker.id);
+        if (!exists) {
+          acc.push(marker);
+        }
+        return acc;
+      }, []);
+
+      if (uniqueMarkers.length !== markers.length) {
+        setMarkers(uniqueMarkers);
+      }
+    };
+
+    // Run cleanup after a short delay to ensure all components are loaded
+    setTimeout(cleanupDuplicates, 1000);
+
+    return () => {
+      delete window.__solarMapAddMarker__;
+      delete window.__solarMapRemoveMarker__;
+      delete window.__solarMapClearMarkers__;
+      delete window.__solarMapFlyToMarker__;
+      delete window.__solarMapGetMarkers__;
+    };
+  }, [markers]);
 
   // Map dragging lock moved to MapBehavior
 
@@ -94,6 +172,17 @@ export default function SolarMap() {
           removeOverlay={removeOverlay}
           selected={selected}
           setSelected={setSelected}
+        />
+      ))}
+
+      {/* Draggable Markers */}
+      {markers.map((marker, index) => (
+        <MovableMarker
+          key={marker.id}
+          position={marker}
+          onPositionChange={(newPosition) => updateMarker(marker.id, newPosition)}
+          onRemove={() => removeMarker(marker.id)}
+          markerNumber={index + 1}
         />
       ))}
     </MapContainer>
