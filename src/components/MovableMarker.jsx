@@ -29,7 +29,12 @@ const customIcon = (markerNumber) =>
     iconAnchor: [16, 32], // bottom tip points to location
   });
 
-export default function MovableMarker({ position, onPositionChange, onRemove, markerNumber }) {
+export default function MovableMarker({
+  position,
+  onPositionChange,
+  onRemove,
+  markerNumber,
+}) {
   const [draggable, setDraggable] = useState(true);
   const markerRef = useRef(null);
 
@@ -83,7 +88,9 @@ export default function MovableMarker({ position, onPositionChange, onRemove, ma
     >
       <Popup minWidth={120}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>Marker #{markerNumber}</div>
+          <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>
+            Marker #{markerNumber}
+          </div>
           <div style={{ marginBottom: '8px', fontSize: '12px', color: '#666' }}>
             Lat: {position.lat.toFixed(6)}
             <br />

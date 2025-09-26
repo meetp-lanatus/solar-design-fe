@@ -26,10 +26,18 @@ export default function SolarMap() {
   });
 
   const updateOverlay = (id, changes) => {
-    setOverlays((prev) => prev.map((o) => (o.id === id ? { ...o, ...changes } : o)));
+    setOverlays((prev) =>
+      prev.map((o) => (o.id === id ? { ...o, ...changes } : o))
+    );
   };
 
-  const addOverlay = (mapCenter, rows = 4, cols = 5, widthMetersArg, heightMetersArg) => {
+  const addOverlay = (
+    mapCenter,
+    rows = 4,
+    cols = 5,
+    widthMetersArg,
+    heightMetersArg
+  ) => {
     setOverlays((prev) => [
       ...prev,
       {
@@ -180,7 +188,9 @@ export default function SolarMap() {
         <MovableMarker
           key={marker.id}
           position={marker}
-          onPositionChange={(newPosition) => updateMarker(marker.id, newPosition)}
+          onPositionChange={(newPosition) =>
+            updateMarker(marker.id, newPosition)
+          }
           onRemove={() => removeMarker(marker.id)}
           markerNumber={index + 1}
         />

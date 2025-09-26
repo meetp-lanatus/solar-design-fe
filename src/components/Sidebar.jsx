@@ -136,8 +136,10 @@ export default function Sidebar() {
         const syncInterval = setInterval(() => {
           if (window.__solarMapGetMarkers__) {
             const mapMarkers = window.__solarMapGetMarkers__();
-            if (mapMarkers.length !== markers.length ||
-              JSON.stringify(mapMarkers) !== JSON.stringify(markers)) {
+            if (
+              mapMarkers.length !== markers.length ||
+              JSON.stringify(mapMarkers) !== JSON.stringify(markers)
+            ) {
               markers = mapMarkers;
               updateMarkerDisplay();
             }
@@ -259,7 +261,7 @@ export default function Sidebar() {
           if (currentAbort) {
             try {
               currentAbort.abort();
-            } catch (_) { }
+            } catch (_) {}
           }
 
           // Set search state
@@ -469,7 +471,7 @@ export default function Sidebar() {
             addMarker(lat, lng);
           }
         });
-      } catch (_) { }
+      } catch (_) {}
     }, 0);
   }
 
@@ -571,7 +573,9 @@ export default function Sidebar() {
               Clear All
             </button>
             <button
-              onClick={() => window.syncMarkersFromMap && window.syncMarkersFromMap()}
+              onClick={() =>
+                window.syncMarkersFromMap && window.syncMarkersFromMap()
+              }
               className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
               title="Sync with map"
             >

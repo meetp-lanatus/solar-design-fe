@@ -19,3 +19,24 @@
 .leaflet-control-geocoder-alternatives li {
   white-space: normal !important;
 }
+
+/* Draggable overlay styles */
+.overlay-draggable {
+  cursor: move !important;
+  transition: all 0.2s ease;
+}
+
+.overlay-draggable:hover {
+  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))
+    drop-shadow(0 0 16px rgba(34, 197, 94, 0.3));
+}
+
+/* Custom marker styles */
+.custom-marker {
+  cursor: move !important;
+  transition: all 0.2s ease;
+}
+
+.custom-marker:hover {
+  transform: scale(1.1);
+}

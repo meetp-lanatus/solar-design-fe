@@ -106,10 +106,11 @@ export const OverlayGeo = ({
         positions={corners}
         pathOptions={{
           color: selected === id ? '#22c55e' : '#111827',
-          weight: 2,
-          fillOpacity: 0.15,
+          weight: selected === id ? 3 : 2,
+          fillOpacity: selected === id ? 0.25 : 0.15,
+          dashArray: selected === id ? '5, 5' : undefined,
         }}
-        className="leaflet-glow-box"
+        className={`leaflet-glow-box ${selected === id ? 'overlay-draggable' : ''}`}
         eventHandlers={{
           click: (e) => {
             e.originalEvent.stopPropagation();
@@ -117,6 +118,32 @@ export const OverlayGeo = ({
           },
           mousedown: (e) => {
             e.originalEvent.stopPropagation();
+            if (selected === id) {
+              // Enable dragging from any point of the polygon
+              const startPos = e.latlng;
+              const startCenter = position;
+
+              const moveHandler = (moveEvent) => {
+                const currentPos = moveEvent.latlng;
+                const deltaLat = currentPos.lat - startPos.lat;
+                const deltaLng = currentPos.lng - startPos.lng;
+
+                const newCenter = [
+                  startCenter[0] + deltaLat,
+                  startCenter[1] + deltaLng,
+                ];
+
+                updateOverlay(id, { position: newCenter });
+              };
+
+              const upHandler = () => {
+                map.off('mousemove', moveHandler);
+                map.off('mouseup', upHandler);
+              };
+
+              map.on('mousemove', moveHandler);
+              map.on('mouseup', upHandler);
+            }
           },
         }}
       >
@@ -135,12 +162,24 @@ export const OverlayGeo = ({
               Perimeter: {(2 * (widthMeters + heightMeters)).toFixed(2)} m
             </div>
             <div>Area: {(widthMeters * heightMeters).toFixed(2)} m²</div>
+            {selected === id && (
+              <div
+                style={{
+                  marginTop: '8px',
+                  fontSize: '12px',
+                  color: '#22c55e',
+                  fontWeight: 'bold',
+                }}
+              >
+                ✋ Drag from anywhere to move
+              </div>
+            )}
           </div>
         </Tooltip>
       </Polygon>
 
       {/* Center drag handle (only when selected) */}
-      {selected === id && (
+      {/* {selected === id && (
         <Marker
           position={position}
           draggable
@@ -156,10 +195,10 @@ export const OverlayGeo = ({
             },
           }}
         />
-      )}
+      )} */}
 
       {/* Corner handles for resize (only when selected) */}
-      {selected === id &&
+      {/* {selected === id &&
         corners.map((latlng, idx) => (
           <Marker
             key={`corner-${id}-${idx}`}
@@ -185,7 +224,7 @@ export const OverlayGeo = ({
               },
             }}
           />
-        ))}
+        ))} */}
 
       {/* Rotation handle */}
       {selected === id && (
@@ -306,6 +345,35 @@ export const OverlayGeo = ({
                     click: (e) => {
                       e.originalEvent.stopPropagation();
                       setSelected(id);
+                    },
+                    mousedown: (e) => {
+                      e.originalEvent.stopPropagation();
+                      if (selected === id) {
+                        // Enable dragging from any panel
+                        const startPos = e.latlng;
+                        const startCenter = position;
+
+                        const moveHandler = (moveEvent) => {
+                          const currentPos = moveEvent.latlng;
+                          const deltaLat = currentPos.lat - startPos.lat;
+                          const deltaLng = currentPos.lng - startPos.lng;
+
+                          const newCenter = [
+                            startCenter[0] + deltaLat,
+                            startCenter[1] + deltaLng,
+                          ];
+
+                          updateOverlay(id, { position: newCenter });
+                        };
+
+                        const upHandler = () => {
+                          map.off('mousemove', moveHandler);
+                          map.off('mouseup', upHandler);
+                        };
+
+                        map.on('mousemove', moveHandler);
+                        map.on('mouseup', upHandler);
+                      }
                     },
                   }}
                 />
