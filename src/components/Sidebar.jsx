@@ -572,22 +572,13 @@ export default function Sidebar() {
             >
               Clear All
             </button>
-            <button
-              onClick={() =>
-                window.syncMarkersFromMap && window.syncMarkersFromMap()
-              }
+            {/* <button
+              onClick={() => window.syncMarkersFromMap && window.syncMarkersFromMap()}
               className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
               title="Sync with map"
             >
               🔄
-            </button>
-            <button
-              onClick={() => window.resetMarkers && window.resetMarkers()}
-              className="text-xs bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-600"
-              title="Reset all markers"
-            >
-              🔄
-            </button>
+            </button> */}
           </div>
         </div>
         <div id="marker-list" className="max-h-40 overflow-y-auto space-y-1">
