@@ -1,6 +1,6 @@
-import { useState, useRef, useMemo, useCallback } from 'react';
-import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { Marker } from 'react-leaflet';
 
 const customIcon = (markerNumber) =>
   L.divIcon({
@@ -14,27 +14,13 @@ const customIcon = (markerNumber) =>
           <path stroke-linecap="round" stroke-linejoin="round" 
             d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
         </svg>
-        <span style="
-          position: absolute;
-          top: 6px;
-          left: 50%;
-          transform: translateX(-50%);
-          color: white;
-          font-size: 11px;
-          font-weight: bold;
-        ">${markerNumber}</span>
       </div>
     `,
     iconSize: [32, 32],
     iconAnchor: [16, 32], // bottom tip points to location
   });
 
-export default function MovableMarker({
-  position,
-  onPositionChange,
-  onRemove,
-  markerNumber,
-}) {
+export default function MovableMarker({ position, onPositionChange, onRemove, markerNumber }) {
   const [draggable, setDraggable] = useState(true);
   const markerRef = useRef(null);
 
@@ -86,11 +72,9 @@ export default function MovableMarker({
       ref={markerRef}
       icon={customIcon(markerNumber)}
     >
-      <Popup minWidth={120}>
+      {/* <Popup minWidth={120}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>
-            Marker #{markerNumber}
-          </div>
+          <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>Marker #{markerNumber}</div>
           <div style={{ marginBottom: '8px', fontSize: '12px', color: '#666' }}>
             Lat: {position.lat.toFixed(6)}
             <br />
@@ -127,7 +111,7 @@ export default function MovableMarker({
             </button>
           </div>
         </div>
-      </Popup>
+      </Popup> */}
     </Marker>
   );
 }
