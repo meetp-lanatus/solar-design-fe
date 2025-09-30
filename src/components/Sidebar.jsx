@@ -76,19 +76,19 @@ export default function Sidebar() {
             markers.forEach((marker, index) => {
               const item = document.createElement('div');
               item.className =
-                'flex items-center justify-between p-2 bg-gray-50 rounded mb-1';
+                'flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200';
               item.innerHTML = `
-                <div class="text-sm">
-                  <div class="font-medium">Marker #${index + 1}</div>
-                  <div class="text-xs text-gray-500">${marker.lat.toFixed(6)}, ${marker.lng.toFixed(6)}</div>
-                </div>
-                <div class="flex gap-1">
-                  <button onclick="window.__solarMapFlyToMarker__ && window.__solarMapFlyToMarker__(${marker.id})" 
-                          class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">Go</button>
-                  <button onclick="removeMarkerById(${marker.id})" 
-                          class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600">×</button>
-                </div>
-              `;
+              <div class="text-sm">
+                <div class="font-medium text-slate-800">Marker #${index + 1}</div>
+                <div class="text-xs text-slate-500">${marker.lat.toFixed(6)}, ${marker.lng.toFixed(6)}</div>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="window.__solarMapFlyToMarker__ && window.__solarMapFlyToMarker__(${marker.id})" 
+                        class="px-3 py-1.5 text-xs bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 font-medium shadow-sm">Go</button>
+                <button onclick="removeMarkerById(${marker.id})" 
+                        class="px-3 py-1.5 text-xs bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium shadow-sm">×</button>
+              </div>
+            `;
               markerList.appendChild(item);
             });
           }
@@ -204,20 +204,15 @@ export default function Sidebar() {
             return frag;
           }
           try {
-            const re = new RegExp(
-              q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-              'ig'
-            );
+            const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig');
             let lastIdx = 0;
             for (const m of text.matchAll(re)) {
               const start = m.index;
               const end = start + m[0].length;
               if (start > lastIdx)
-                frag.appendChild(
-                  document.createTextNode(text.slice(lastIdx, start))
-                );
+                frag.appendChild(document.createTextNode(text.slice(lastIdx, start)));
               const mark = document.createElement('mark');
-              mark.className = 'bg-yellow-200 text-gray-900 px-0.5 rounded';
+              mark.className = 'bg-yellow-200 text-slate-900 px-1 rounded-sm font-medium';
               mark.textContent = text.slice(start, end);
               frag.appendChild(mark);
               lastIdx = end;
@@ -279,8 +274,9 @@ export default function Sidebar() {
           const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=${apiKey}&region=in`;
           suggestBox.innerHTML = '';
           const loading = document.createElement('div');
-          loading.className = 'px-3 py-2 text-sm text-gray-500';
-          loading.textContent = 'Loading…';
+          loading.className = 'px-4 py-3 text-sm text-slate-500 flex items-center gap-2';
+          loading.innerHTML =
+            '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>Loading…';
           suggestBox.appendChild(loading);
           showSuggest();
 
@@ -335,8 +331,8 @@ export default function Sidebar() {
           if (results.length === 0) {
             suggestBox.innerHTML = '';
             const empty = document.createElement('div');
-            empty.className = 'px-3 py-2 text-sm text-gray-500';
-            empty.textContent = 'No results';
+            empty.className = 'px-4 py-3 text-sm text-slate-500 text-center';
+            empty.textContent = 'No results found';
             suggestBox.appendChild(empty);
             showSuggest();
             lastQuery = query;
@@ -357,14 +353,14 @@ export default function Sidebar() {
             item.type = 'button';
             item.setAttribute('data-suggest-item', '');
             item.className =
-              'w-full text-left px-3 py-2 hover:bg-gray-50 border-b last:border-b-0 focus:outline-none';
+              'w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 focus:outline-none focus:bg-slate-50 transition-colors duration-200';
 
             const top = document.createElement('div');
-            top.className = 'text-sm font-medium text-gray-900';
+            top.className = 'text-sm font-medium text-slate-800';
             top.appendChild(highlightMatch(result.formatted_address, query));
 
             const bottom = document.createElement('div');
-            bottom.className = 'text-xs text-gray-500';
+            bottom.className = 'text-xs text-slate-500';
             bottom.textContent = result.types?.join(', ') || '';
 
             item.appendChild(top);
@@ -373,8 +369,7 @@ export default function Sidebar() {
             item.onclick = () => {
               latInput.value = String(lat);
               lngInput.value = String(lng);
-              if (window.__solarMapFlyTo__)
-                window.__solarMapFlyTo__(lat, lng, 18);
+              if (window.__solarMapFlyTo__) window.__solarMapFlyTo__(lat, lng, 18);
               addMarker(lat, lng);
               hideSuggest();
             };
@@ -466,8 +461,7 @@ export default function Sidebar() {
           const lat = parseFloat(latInput?.value);
           const lng = parseFloat(lngInput?.value);
           if (Number.isFinite(lat) && Number.isFinite(lng)) {
-            if (window.__solarMapFlyTo__)
-              window.__solarMapFlyTo__(lat, lng, 18);
+            if (window.__solarMapFlyTo__) window.__solarMapFlyTo__(lat, lng, 18);
             addMarker(lat, lng);
           }
         });
@@ -476,79 +470,83 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-72 h-screen border-r bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60 p-4 flex flex-col gap-6">
-      <div>
-        <h2 className="text-lg font-semibold">Map Manager</h2>
-        <p className="text-sm text-gray-600">Draw shapes and manage overlays</p>
+    <aside className="w-80 h-screen border-r border-slate-200 bg-gradient-to-b from-slate-50 to-white shadow-lg backdrop-blur-sm p-6 flex flex-col gap-8">
+      <div className="border-b border-slate-200 pb-6">
+        <h2 className="text-xl font-bold text-slate-800 mb-2">Map Manager</h2>
+        <p className="text-sm text-slate-600">Draw shapes and manage overlays</p>
       </div>
 
       {/* Search Controls */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">Choose Input Mode</label>
-        <div className="inline-flex rounded-md border overflow-hidden">
-          <button
-            id="mode-place"
-            className="px-3 py-1.5 text-sm bg-blue-600 text-white"
-          >
-            Place
-          </button>
-          <button
-            id="mode-latlng"
-            className="px-3 py-1.5 text-sm bg-white text-gray-700"
-          >
-            Lat/Lng
-          </button>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-3">
+            Choose Input Mode
+          </label>
+          <div className="inline-flex rounded-lg border border-slate-300 overflow-hidden shadow-sm">
+            <button
+              id="mode-place"
+              className="px-4 py-2 text-sm font-medium bg-blue-600 text-white transition-colors duration-200 hover:bg-blue-700"
+            >
+              Place
+            </button>
+            <button
+              id="mode-latlng"
+              className="px-4 py-2 text-sm font-medium bg-white text-slate-700 transition-colors duration-200 hover:bg-slate-50"
+            >
+              Lat/Lng
+            </button>
+          </div>
         </div>
 
         {/* Place mode */}
-        <div id="sidebar-mode-place" className="space-y-2">
-          <label className="block text-sm text-gray-600">
+        <div id="sidebar-mode-place" className="space-y-3">
+          <label className="block text-sm font-medium text-slate-700">
             Search by place name or address
           </label>
           <div className="flex gap-2">
             <input
               id="sidebar-search"
               placeholder="Search for places..."
-              className="flex-1 rounded-md border px-3 py-2 text-sm"
+              className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
               type="search"
             />
             <button
               id="sidebar-search-go"
-              className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm"
+              className="px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
             >
               Go
             </button>
           </div>
           <div
             id="sidebar-suggestions"
-            className="mt-1 rounded-md border bg-white shadow-sm max-h-56 overflow-auto hidden"
+            className="mt-2 rounded-lg border border-slate-200 bg-white shadow-lg max-h-56 overflow-auto hidden"
           />
         </div>
 
         {/* Lat/Lng mode */}
-        <div id="sidebar-mode-latlng" className="space-y-2 hidden">
-          <label className="block text-sm text-gray-600">
+        <div id="sidebar-mode-latlng" className="space-y-3 hidden">
+          <label className="block text-sm font-medium text-slate-700">
             Enter latitude and longitude
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <input
               id="sidebar-lat"
               type="number"
               step="0.0001"
               placeholder="Latitude"
-              className="rounded-md border px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             />
             <input
               id="sidebar-lng"
               type="number"
               step="0.0001"
               placeholder="Longitude"
-              className="rounded-md border px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             />
           </div>
           <button
             id="sidebar-latlng-go"
-            className="w-full px-3 py-2 rounded-md bg-green-600 text-white text-sm"
+            className="w-full px-4 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
           >
             Fly To
           </button>
@@ -556,81 +554,79 @@ export default function Sidebar() {
       </div>
 
       {/* Marker Management */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-medium">Markers</div>
+          <div className="text-sm font-semibold text-slate-700">Markers</div>
           <div className="flex gap-2">
             <span
               id="marker-count"
-              className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+              className="text-xs bg-blue-100 text-blue-800 px-3 py-1.5 rounded-full font-medium"
             >
               0
             </span>
             <button
               onClick={() => window.clearAllMarkers && window.clearAllMarkers()}
-              className="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+              className="text-xs bg-red-500 text-white px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium shadow-sm"
             >
               Clear All
             </button>
-            {/* <button
-              onClick={() => window.syncMarkersFromMap && window.syncMarkersFromMap()}
-              className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-              title="Sync with map"
-            >
-              🔄
-            </button> */}
           </div>
         </div>
-        <div id="marker-list" className="max-h-40 overflow-y-auto space-y-1">
+        <div
+          id="marker-list"
+          className="max-h-48 overflow-y-auto space-y-2 bg-slate-50 rounded-lg p-3 border border-slate-200"
+        >
           {/* Markers will be dynamically added here */}
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-slate-500 bg-slate-100 rounded-lg p-3">
           Search for locations to add markers. Markers are draggable on the map.
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="text-sm font-medium">Grid Overlay</div>
-        <div className="grid grid-cols-2 gap-2">
+      <div className="space-y-4">
+        <div className="text-sm font-semibold text-slate-700">Grid Overlay</div>
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-600">Rows</label>
+            <label className="text-xs font-medium text-slate-600 mb-1 block">Rows</label>
             <input
               id="rows-input"
               defaultValue={4}
               type="number"
               min={1}
-              className="w-full rounded-md border px-2 py-1 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-600">Columns</label>
+            <label className="text-xs font-medium text-slate-600 mb-1 block">Columns</label>
             <input
               id="cols-input"
               defaultValue={5}
               type="number"
               min={1}
-              className="w-full rounded-md border px-2 py-1 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-600">Panel width (m)</label>
+            <label className="text-xs font-medium text-slate-600 mb-1 block">Panel width (m)</label>
             <input
               id="width-m-input"
               type="number"
               step={0.1}
               min={1}
-              className="w-full rounded-md border px-2 py-1 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
               placeholder="auto"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-600">Panel height (m)</label>
+            <label className="text-xs font-medium text-slate-600 mb-1 block">
+              Panel height (m)
+            </label>
             <input
               id="height-m-input"
               type="number"
               step={0.1}
               min={1}
-              className="w-full rounded-md border px-2 py-1 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
               placeholder="auto"
             />
           </div>
@@ -638,24 +634,14 @@ export default function Sidebar() {
 
         <button
           id="add-overlay-btn"
-          className="w-full px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm shadow-sm"
+          className="w-full px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           onClick={() => {
             const rows = document.getElementById('rows-input')?.value || 4;
             const cols = document.getElementById('cols-input')?.value || 5;
-            const widthM =
-              document.getElementById('width-m-input')?.value || '';
-            const heightM =
-              document.getElementById('height-m-input')?.value || '';
-            if (
-              typeof window !== 'undefined' &&
-              window.__solarMapAddOverlayAtCenter__
-            ) {
-              window.__solarMapAddOverlayAtCenter__(
-                rows,
-                cols,
-                widthM,
-                heightM
-              );
+            const widthM = document.getElementById('width-m-input')?.value || '';
+            const heightM = document.getElementById('height-m-input')?.value || '';
+            if (typeof window !== 'undefined' && window.__solarMapAddOverlayAtCenter__) {
+              window.__solarMapAddOverlayAtCenter__(rows, cols, widthM, heightM);
             }
           }}
         >
