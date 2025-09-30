@@ -16,9 +16,8 @@ const SignIn = () => {
   const onSubmit = async (data) => {
     try {
       const result = await signIn(data.email, data.password);
-      console.log(result);
-      if (result.success) {
-        // window.location.href = '/';
+      if (result.status) {
+        window.location.href = '/';
       } else {
         toast.error('Sign in failed: ' + result.error);
       }
