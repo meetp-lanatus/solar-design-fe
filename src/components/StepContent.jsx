@@ -17,9 +17,14 @@ export const StepContent = ({
     switch (activeStep) {
       case 0:
         return (
-          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Box
+            sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          >
             <Box sx={{ flex: 1, display: 'flex', minHeight: 0 }}>
-              <Sidebar onAddressSelect={onAddressSelect} selectedAddress={selectedAddress} />
+              <Sidebar
+                onAddressSelect={onAddressSelect}
+                selectedAddress={selectedAddress}
+              />
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <SolarMap selectedAddress={selectedAddress} />
               </Box>

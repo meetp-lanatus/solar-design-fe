@@ -118,7 +118,9 @@ export default function SolarMap({ selectedAddress }) {
         <MovableMarker
           key={`marker-${marker.id}-${index}`}
           position={marker}
-          onPositionChange={(newPosition) => updateMarker(marker.id, newPosition)}
+          onPositionChange={(newPosition) =>
+            updateMarker(marker.id, newPosition)
+          }
         />
       ))}
     </MapContainer>

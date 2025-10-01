@@ -58,7 +58,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                 <FormControl component="fieldset">
                   <RadioGroup
                     value={formData.siteType || ''}
-                    onChange={(e) => handleInputChange('siteType', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('siteType', e.target.value)
+                    }
                     row
                     sx={{ gap: 2 }}
                   >
@@ -66,7 +68,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                       value="residential"
                       control={<Radio />}
                       label={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box
+                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                        >
                           <Home color="primary" />
                           <Typography>Residential</Typography>
                         </Box>
@@ -76,7 +80,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                       value="commercial"
                       control={<Radio />}
                       label={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box
+                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                        >
                           <Business color="primary" />
                           <Typography>Commercial</Typography>
                         </Box>
@@ -90,7 +96,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                   fullWidth
                   label="Site Name"
                   value={formData.siteName || ''}
-                  onChange={(e) => handleInputChange('siteName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('siteName', e.target.value)
+                  }
                   placeholder="e.g., Johnson Residence"
                   size="large"
                 />
@@ -101,7 +109,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                   fullWidth
                   label="Customer Name"
                   value={formData.customer || ''}
-                  onChange={(e) => handleInputChange('customer', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('customer', e.target.value)
+                  }
                   placeholder="e.g., Sarah Johnson"
                 />
               </Grid>
@@ -111,7 +121,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                   <InputLabel>Status</InputLabel>
                   <Select
                     value={formData.status || ''}
-                    onChange={(e) => handleInputChange('status', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('status', e.target.value)
+                    }
                     label="Status"
                   >
                     <MenuItem value="active">Active</MenuItem>
@@ -127,7 +139,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                   label="Installation Date"
                   type="date"
                   value={formData.installationDate || ''}
-                  onChange={(e) => handleInputChange('installationDate', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('installationDate', e.target.value)
+                  }
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
@@ -138,7 +152,9 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                   label="Estimated Peak Power"
                   type="number"
                   value={formData.estimatedPeakPowerValue || ''}
-                  onChange={(e) => handleInputChange('estimatedPeakPowerValue', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('estimatedPeakPowerValue', e.target.value)
+                  }
                   placeholder="e.g., 5.5"
                   inputProps={{ step: '0.1' }}
                   InputProps={{
@@ -148,7 +164,10 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                           <Select
                             value={formData.estimatedPeakPowerUnit || 'kWp'}
                             onChange={(e) =>
-                              handleInputChange('estimatedPeakPowerUnit', e.target.value)
+                              handleInputChange(
+                                'estimatedPeakPowerUnit',
+                                e.target.value
+                              )
                             }
                             sx={{
                               '& .MuiSelect-select': {
@@ -161,9 +180,10 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                               '&:hover .MuiOutlinedInput-notchedOutline': {
                                 border: 'none',
                               },
-                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                border: 'none',
-                              },
+                              '&.Mui-focused .MuiOutlinedInput-notchedOutline':
+                                {
+                                  border: 'none',
+                                },
                             }}
                           >
                             <MenuItem value="Wp">Wp</MenuItem>
@@ -260,7 +280,8 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                       </Typography>
                     </Box>
                     <Typography variant="caption" color="text.secondary">
-                      Lat {selectedAddress.lat?.toFixed(5)}, Lon {selectedAddress.lng?.toFixed(5)}
+                      Lat {selectedAddress.lat?.toFixed(5)}, Lon{' '}
+                      {selectedAddress.lng?.toFixed(5)}
                     </Typography>
                   </>
                 ) : (

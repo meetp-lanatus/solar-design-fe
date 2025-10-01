@@ -27,7 +27,10 @@ export default function StepperHeader({
         }}
       >
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}
+          >
             Create Site
           </Typography>
         </Box>
@@ -48,7 +51,10 @@ export default function StepperHeader({
               const isDone = index < activeStep;
 
               return (
-                <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box
+                  key={label}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
+                >
                   <Box
                     sx={{
                       width: 28,
@@ -85,7 +91,11 @@ export default function StepperHeader({
                     variant="body2"
                     sx={{
                       fontWeight: isActive ? 700 : 500,
-                      color: isActive ? 'primary.main' : isDone ? 'primary.dark' : 'text.secondary',
+                      color: isActive
+                        ? 'primary.main'
+                        : isDone
+                          ? 'primary.dark'
+                          : 'text.secondary',
                       fontSize: '0.875rem',
                     }}
                   >
@@ -121,7 +131,8 @@ export default function StepperHeader({
             variant="contained"
             onClick={onNext}
             disabled={
-              (activeStep === 0 && !canProceedToStep1) || (activeStep === 1 && !canProceedToStep2)
+              (activeStep === 0 && !canProceedToStep1) ||
+              (activeStep === 1 && !canProceedToStep2)
             }
             endIcon={<ArrowForward />}
             size="small"
@@ -133,4 +144,3 @@ export default function StepperHeader({
     </Paper>
   );
 }
-
