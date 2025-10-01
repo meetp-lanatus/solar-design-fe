@@ -1,6 +1,12 @@
+import { MyLocation as LocationIcon, Navigation as NavigationIcon } from '@mui/icons-material';
+import { Box, Divider, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import LatLngInput from './LatLngInput';
+import SearchInput from './SearchInput';
+import SearchResults from './SearchResults';
+import SelectedLocation from './SelectedLocation';
 
-export default function Sidebar() {
+export default function Sidebar({ onAddressSelect, selectedAddress }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -9,14 +15,12 @@ export default function Sidebar() {
   const [isPlaceMode, setIsPlaceMode] = useState(true);
   const [latInput, setLatInput] = useState('');
   const [lngInput, setLngInput] = useState('');
-  const [activeIndex, setActiveIndex] = useState(-1);
 
   const searchCache = useRef(new Map());
   const abortController = useRef(null);
-  const debounceTimer = useRef(null);
 
   const searchGoogle = useCallback(
-    async (query, immediate = false) => {
+    async (query) => {
       const trimmedQuery = query.trim();
 
       if (!trimmedQuery || trimmedQuery.length < 3) {
@@ -24,7 +28,7 @@ export default function Sidebar() {
         return;
       }
 
-      if (isSearching && query === trimmedQuery) return;
+      if (isSearching) return;
 
       if (searchCache.current.has(trimmedQuery)) {
         const cached = searchCache.current.get(trimmedQuery);
@@ -49,7 +53,9 @@ export default function Sidebar() {
 
       try {
         const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(trimmedQuery)}&key=${apiKey}&region=in`;
-        const response = await fetch(url, { signal: abortController.current.signal });
+        const response = await fetch(url, {
+          signal: abortController.current.signal,
+        });
 
         if (!response.ok) {
           setShowSuggestions(false);
@@ -66,7 +72,6 @@ export default function Sidebar() {
 
         setSearchResults(results);
         setShowSuggestions(true);
-        setActiveIndex(-1);
       } catch (error) {
         if (error.name !== 'AbortError') {
           setShowSuggestions(false);
@@ -79,37 +84,20 @@ export default function Sidebar() {
     [isSearching]
   );
 
-  const debouncedSearch = useCallback(
-    (query) => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-
-      debounceTimer.current = setTimeout(() => {
-        const trimmed = query.trim();
-        if (trimmed.length >= 3) {
-          searchGoogle(trimmed, false);
-        }
-      }, 1000);
-    },
-    [searchGoogle]
-  );
-
   const handleSearchInput = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
 
     if (value.length < 3) {
       setShowSuggestions(false);
+      setSearchResults([]);
       return;
     }
-
-    debouncedSearch(value);
   };
 
   const handleSearchSubmit = () => {
     if (searchQuery.trim().length >= 3) {
-      searchGoogle(searchQuery.trim(), true);
+      searchGoogle(searchQuery.trim());
     }
   };
 
@@ -121,6 +109,16 @@ export default function Sidebar() {
       setLngInput(String(location.lng));
       setSearchQuery(result.formatted_address);
       setShowSuggestions(false);
+
+      // Call the parent component's address select handler
+      if (onAddressSelect) {
+        onAddressSelect({
+          formatted_address: result.formatted_address,
+          lat: location.lat,
+          lng: location.lng,
+          place_id: result.place_id,
+        });
+      }
 
       if (window.__solarMapFlyTo__) {
         window.__solarMapFlyTo__(location.lat, location.lng, 18);
@@ -141,23 +139,12 @@ export default function Sidebar() {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (!showSuggestions) return;
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setActiveIndex((prev) => (prev < searchResults.length - 1 ? prev + 1 : 0));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActiveIndex((prev) => (prev > 0 ? prev - 1 : searchResults.length - 1));
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (activeIndex >= 0 && activeIndex < searchResults.length) {
-        handleResultSelect(searchResults[activeIndex]);
-      }
-    } else if (e.key === 'Escape') {
-      setShowSuggestions(false);
-    }
+  const clearSelection = () => {
+    setSelectedResult(null);
+    setSearchQuery('');
+    setLatInput('');
+    setLngInput('');
+    setShowSuggestions(false);
   };
 
   const handleLatLngSubmit = () => {
@@ -165,6 +152,18 @@ export default function Sidebar() {
     const lng = parseFloat(lngInput);
 
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      const customAddress = {
+        formatted_address: `Custom Location (${lat.toFixed(6)}, ${lng.toFixed(6)})`,
+        lat,
+        lng,
+        place_id: `custom_${Date.now()}`,
+      };
+
+      // Call the parent component's address select handler
+      if (onAddressSelect) {
+        onAddressSelect(customAddress);
+      }
+
       if (window.__solarMapFlyTo__) {
         window.__solarMapFlyTo__(lat, lng, 18);
       }
@@ -189,16 +188,6 @@ export default function Sidebar() {
     }
   };
 
-  const highlightMatch = (text, query) => {
-    if (!text || !query) return text;
-
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return text.replace(
-      regex,
-      '<mark class="bg-yellow-200 text-slate-900 px-1 rounded-sm font-medium">$1</mark>'
-    );
-  };
-
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.search-container')) {
@@ -215,152 +204,146 @@ export default function Sidebar() {
       if (abortController.current) {
         abortController.current.abort();
       }
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
     };
   }, []);
 
+  useEffect(() => {
+    if (selectedAddress) {
+      setSelectedResult({
+        formatted_address: selectedAddress.formatted_address,
+        geometry: {
+          location: { lat: selectedAddress.lat, lng: selectedAddress.lng },
+        },
+      });
+      setSearchQuery(selectedAddress.formatted_address || selectedAddress.name || '');
+      setLatInput(String(selectedAddress.lat));
+      setLngInput(String(selectedAddress.lng));
+    } else {
+      setSelectedResult(null);
+      setSearchQuery('');
+      setLatInput('');
+      setLngInput('');
+    }
+  }, [selectedAddress]);
+
+  useEffect(() => {
+    const handleMarkerMove = (event) => {
+      if (event.detail && event.detail.lat && event.detail.lng) {
+        const { lat, lng } = event.detail;
+        setLatInput('');
+        setLngInput('');
+
+        if (onAddressSelect) {
+          onAddressSelect({
+            ...selectedAddress,
+            lat,
+            lng,
+            markerMoved: true,
+          });
+        }
+      }
+    };
+
+    window.addEventListener('markerMoved', handleMarkerMove);
+    return () => window.removeEventListener('markerMoved', handleMarkerMove);
+  }, [selectedAddress, onAddressSelect]);
+
   return (
-    <aside className="w-full h-screen border-r border-slate-200 bg-gradient-to-b from-slate-50 to-white shadow-lg backdrop-blur-sm p-6 flex flex-col gap-8">
-      <div className="border-b border-slate-200 pb-6">
-        <h2 className="text-xl font-bold text-slate-800 mb-2">Map Manager</h2>
-        <p className="text-sm text-slate-600">Search places and manage locations</p>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-3">
+    <Paper
+      elevation={3}
+      sx={{
+        width: '400px',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 0,
+        p: 2.5,
+        gap: 2.5,
+      }}
+    >
+      <Box>
+        <Typography variant="h5" component="h2" sx={{ fontWeight: 700, color: 'text.primary' }}>
+          Map Manager
+        </Typography>
+      </Box>
+      <Divider />
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
             Choose Input Mode
-          </label>
-          <div className="inline-flex rounded-lg border border-slate-300 overflow-hidden shadow-sm">
-            <button
-              onClick={() => setIsPlaceMode(true)}
-              className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                isPlaceMode ? 'bg-blue-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'
-              }`}
-            >
+          </Typography>
+          <ToggleButtonGroup
+            value={isPlaceMode}
+            exclusive
+            onChange={(_, newMode) => setIsPlaceMode(newMode)}
+            size="small"
+            fullWidth
+            sx={{
+              gap: 2,
+              '& .MuiToggleButton-root': {
+                border: '1px solid',
+                borderColor: 'grey.300',
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 500,
+                flex: 1,
+                '&.Mui-selected': {
+                  backgroundColor: 'primary.main',
+                  color: 'primary.contrastText',
+                  '&:hover': {
+                    backgroundColor: 'primary.dark',
+                  },
+                },
+              },
+            }}
+          >
+            <ToggleButton value={true}>
+              <LocationIcon sx={{ mr: 1, fontSize: 18 }} />
               Place
-            </button>
-            <button
-              onClick={() => setIsPlaceMode(false)}
-              className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                !isPlaceMode
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-slate-700 hover:bg-slate-50'
-              }`}
-            >
+            </ToggleButton>
+            <ToggleButton value={false}>
+              <NavigationIcon sx={{ mr: 1, fontSize: 18 }} />
               Lat/Lng
-            </button>
-          </div>
-        </div>
-
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+        <Divider />
         {isPlaceMode ? (
-          <div className="search-container space-y-3">
-            <label className="block text-sm font-medium text-slate-700">
-              Search by place name or address
-            </label>
-            <div className="flex gap-2">
-              <input
-                value={searchQuery}
-                onChange={handleSearchInput}
-                onKeyDown={handleKeyDown}
-                placeholder="Search for places..."
-                className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-                type="search"
-              />
-              <button
-                onClick={handleSearchSubmit}
-                className="px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
-              >
-                Go
-              </button>
-            </div>
-
-            {showSuggestions && (
-              <div className="mt-2 rounded-lg border border-slate-200 bg-white shadow-lg max-h-56 overflow-auto">
-                {isSearching ? (
-                  <div className="px-4 py-3 text-sm text-slate-500 flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                    Loading…
-                  </div>
-                ) : searchResults.length === 0 ? (
-                  <div className="px-4 py-3 text-sm text-slate-500 text-center">
-                    No results found
-                  </div>
-                ) : (
-                  searchResults.slice(0, 7).map((result, index) => {
-                    const location = result.geometry?.location;
-                    if (!location?.lat || !location?.lng) return null;
-
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => handleResultSelect(result)}
-                        className={`w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 focus:outline-none focus:bg-slate-50 transition-colors duration-200 ${
-                          activeIndex === index ? 'bg-blue-50' : ''
-                        }`}
-                      >
-                        <div className="text-sm font-medium text-slate-800">
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: highlightMatch(result.formatted_address, searchQuery),
-                            }}
-                          />
-                        </div>
-                        {result.types && result.types.length > 0 && (
-                          <div className="text-xs text-slate-500">{result.types.join(', ')}</div>
-                        )}
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            )}
-          </div>
+          <Box
+            className="search-container"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            <SearchInput
+              searchQuery={searchQuery}
+              onSearchInput={handleSearchInput}
+              onSearchSubmit={handleSearchSubmit}
+              isSearching={isSearching}
+            />
+            <SearchResults
+              showSuggestions={showSuggestions}
+              isSearching={isSearching}
+              searchResults={searchResults}
+              searchQuery={searchQuery}
+              onResultSelect={handleResultSelect}
+            />
+          </Box>
         ) : (
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-slate-700">
-              Enter latitude and longitude
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                value={latInput}
-                onChange={(e) => setLatInput(e.target.value)}
-                type="number"
-                step="0.0001"
-                placeholder="Latitude"
-                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-              />
-              <input
-                value={lngInput}
-                onChange={(e) => setLngInput(e.target.value)}
-                type="number"
-                step="0.0001"
-                placeholder="Longitude"
-                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-              />
-            </div>
-            <button
-              onClick={handleLatLngSubmit}
-              className="w-full px-4 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
-            >
-              Fly To
-            </button>
-          </div>
+          <LatLngInput
+            latInput={latInput}
+            lngInput={lngInput}
+            onLatChange={(e) => setLatInput(e.target.value)}
+            onLngChange={(e) => setLngInput(e.target.value)}
+            onSubmit={handleLatLngSubmit}
+          />
         )}
 
-        {selectedResult && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="text-sm font-semibold text-blue-800 mb-2">Current Location</h3>
-            <div className="text-sm text-blue-700 mb-2">{selectedResult.formatted_address}</div>
-            <div className="text-xs text-blue-600">
-              <div>Latitude: {latInput}</div>
-              <div>Longitude: {lngInput}</div>
-            </div>
-          </div>
-        )}
-      </div>
-    </aside>
+        <SelectedLocation
+          selectedResult={selectedResult}
+          selectedAddress={selectedAddress}
+          latInput={latInput}
+          lngInput={lngInput}
+          onClear={clearSelection}
+        />
+      </Box>
+    </Paper>
   );
 }
