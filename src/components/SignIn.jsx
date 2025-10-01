@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import GoogleIcon from '../assets/icons/google-icon-logo.svg';
 import { useAuth } from '../contexts/AuthContext';
 
-const SignIn = () => {
+export const SignIn = () => {
   const { signIn, signInWithGoogle, isLoading } = useAuth();
 
   const {
@@ -76,8 +76,7 @@ const SignIn = () => {
                   mx: 'auto',
                   width: 48,
                   height: 48,
-                  background:
-                    'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
                   borderRadius: 2,
                   display: 'flex',
                   alignItems: 'center',
@@ -112,11 +111,7 @@ const SignIn = () => {
               </Typography>
             </Box>
 
-            <Box
-              component="form"
-              onSubmit={handleSubmit(onSubmit)}
-              sx={{ mb: 3 }}
-            >
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mb: 3 }}>
               <Box sx={{ mb: 2 }}>
                 <TextField
                   fullWidth
@@ -198,11 +193,9 @@ const SignIn = () => {
                 disabled={isLoading}
                 sx={{
                   py: 1.5,
-                  background:
-                    'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
                   '&:hover': {
-                    background:
-                      'linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%)',
+                    background: 'linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%)',
                   },
                   '&:disabled': {
                     opacity: 0.5,
@@ -211,10 +204,7 @@ const SignIn = () => {
               >
                 {isLoading ? (
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <CircularProgress
-                      size={20}
-                      sx={{ color: 'white', mr: 1 }}
-                    />
+                    <CircularProgress size={20} sx={{ color: 'white', mr: 1 }} />
                     Signing in...
                   </Box>
                 ) : (
@@ -274,5 +264,3 @@ const SignIn = () => {
     </Box>
   );
 };
-
-export default SignIn;

@@ -1,22 +1,12 @@
-import {
-  MyLocation as LocationIcon,
-  Navigation as NavigationIcon,
-} from '@mui/icons-material';
-import {
-  Box,
-  Divider,
-  Paper,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
+import { MyLocation as LocationIcon, Navigation as NavigationIcon } from '@mui/icons-material';
+import { Box, Divider, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import LatLngInput from './LatLngInput';
-import SearchInput from './SearchInput';
-import SearchResults from './SearchResults';
-import SelectedLocation from './SelectedLocation';
+import { LatLngInput } from './LatLngInput';
+import { SearchInput } from './SearchInput';
+import { SearchResults } from './SearchResults';
+import { SelectedLocation } from './SelectedLocation';
 
-export default function Sidebar({ onAddressSelect, selectedAddress }) {
+export const Sidebar = ({ onAddressSelect, selectedAddress }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -225,9 +215,7 @@ export default function Sidebar({ onAddressSelect, selectedAddress }) {
           location: { lat: selectedAddress.lat, lng: selectedAddress.lng },
         },
       });
-      setSearchQuery(
-        selectedAddress.formatted_address || selectedAddress.name || ''
-      );
+      setSearchQuery(selectedAddress.formatted_address || selectedAddress.name || '');
       setLatInput(String(selectedAddress.lat));
       setLngInput(String(selectedAddress.lng));
     } else {
@@ -273,27 +261,24 @@ export default function Sidebar({ onAddressSelect, selectedAddress }) {
       }}
     >
       <Box>
-        <Typography
-          variant="h5"
-          component="h2"
-          sx={{ fontWeight: 700, color: 'text.primary' }}
-        >
+        <Typography variant="h5" component="h2" sx={{ fontWeight: 700, color: 'text.primary' }}>
           Map Manager
         </Typography>
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box>
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 600, color: 'text.primary', mb: 1.5 }}
-          >
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
             Choose Input Mode
           </Typography>
           <ToggleButtonGroup
             value={isPlaceMode}
             exclusive
-            onChange={(_, newMode) => setIsPlaceMode(newMode)}
+            onChange={(_, newMode) => {
+              if (newMode !== null) {
+                setIsPlaceMode(newMode);
+              }
+            }}
             size="small"
             fullWidth
             sx={{
@@ -365,4 +350,4 @@ export default function Sidebar({ onAddressSelect, selectedAddress }) {
       </Box>
     </Paper>
   );
-}
+};

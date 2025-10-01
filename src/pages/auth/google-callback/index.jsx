@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../../contexts/AuthContext';
-import {
-  extractGoogleCallbackParams,
-  clearUrlParams,
-} from '../../../utils/auth.utils';
+import { extractGoogleCallbackParams, clearUrlParams } from '../../../utils/auth.utils';
 import {
   Alert,
   Box,
@@ -17,7 +14,7 @@ import {
 } from '@mui/material';
 import { Error as ErrorIcon } from '@mui/icons-material';
 
-const GoogleCallback = () => {
+export const GoogleCallback = () => {
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState(null);
   const { handleGoogleCallback } = useAuth();
@@ -25,8 +22,7 @@ const GoogleCallback = () => {
   useEffect(() => {
     const processGoogleCallback = async () => {
       try {
-        const { token, expiresIn, refreshToken, hasValidParams } =
-          extractGoogleCallbackParams();
+        const { token, expiresIn, refreshToken, hasValidParams } = extractGoogleCallbackParams();
 
         if (!hasValidParams) {
           setError('Invalid callback parameters');
@@ -34,11 +30,7 @@ const GoogleCallback = () => {
           return;
         }
 
-        const result = await handleGoogleCallback(
-          token,
-          expiresIn,
-          refreshToken
-        );
+        const result = await handleGoogleCallback(token, expiresIn, refreshToken);
 
         if (result.success) {
           clearUrlParams();
@@ -114,11 +106,7 @@ const GoogleCallback = () => {
         <Container maxWidth="sm">
           <Card sx={{ textAlign: 'center' }}>
             <CardContent sx={{ p: 3 }}>
-              <Alert
-                severity="error"
-                icon={<ErrorIcon />}
-                sx={{ mb: 2, textAlign: 'left' }}
-              >
+              <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2, textAlign: 'left' }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
                   Authentication Failed
                 </Typography>
@@ -130,11 +118,9 @@ const GoogleCallback = () => {
                 fullWidth
                 sx={{
                   py: 1.5,
-                  background:
-                    'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
                   '&:hover': {
-                    background:
-                      'linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%)',
+                    background: 'linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%)',
                   },
                 }}
               >
@@ -149,5 +135,3 @@ const GoogleCallback = () => {
 
   return null;
 };
-
-export default GoogleCallback;

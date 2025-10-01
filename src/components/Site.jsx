@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { useState } from 'react';
 import { StepContent } from './StepContent';
-import StepperHeader from './StepperHeader';
+import { StepperHeader } from './StepperHeader';
 
 const steps = ['Address', 'Site Info'];
 export const Site = () => {
@@ -10,13 +10,11 @@ export const Site = () => {
   const [formData, setFormData] = useState({
     siteName: '',
     siteType: '',
-    siteArea: '',
     customer: '',
     status: '',
     installationDate: '',
     estimatedPeakPowerValue: '',
     estimatedPeakPowerUnit: 'kWp',
-    accountNumber: '',
     notes: '',
   });
 
@@ -47,8 +45,7 @@ export const Site = () => {
   };
 
   const canProceedToStep1 = selectedAddress !== null;
-  const canProceedToStep2 =
-    formData.siteName && formData.siteType && formData.customer;
+  const canProceedToStep2 = formData.siteName && formData.siteType && formData.customer;
 
   return (
     <Box

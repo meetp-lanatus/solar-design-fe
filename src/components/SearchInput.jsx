@@ -1,24 +1,10 @@
 import { Search as SearchIcon } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, InputAdornment, TextField, Typography } from '@mui/material';
 
-export default function SearchInput({
-  searchQuery,
-  onSearchInput,
-  onSearchSubmit,
-  isSearching,
-}) {
+export const SearchInput = ({ searchQuery, onSearchInput, onSearchSubmit, isSearching }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography
-        variant="body2"
-        sx={{ fontWeight: 500, color: 'text.primary' }}
-      >
+      <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
         Search by place name or address
       </Typography>
       <Box sx={{ display: 'flex', gap: 1 }}>
@@ -50,4 +36,4 @@ export default function SearchInput({
       </Box>
     </Box>
   );
-}
+};

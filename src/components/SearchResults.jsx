@@ -9,19 +9,16 @@ import {
   Typography,
 } from '@mui/material';
 
-export default function SearchResults({
+export const SearchResults = ({
   showSuggestions,
   isSearching,
   searchResults,
   searchQuery,
   onResultSelect,
-}) {
+}) => {
   const highlightMatch = (text, query) => {
     if (!text || !query) return text;
-    const regex = new RegExp(
-      `(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
-      'gi'
-    );
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     return text.replace(
       regex,
       '<mark style="background-color: #fef3c7; color: #1e293b; padding: 2px 4px; border-radius: 4px; font-weight: 500;">$1</mark>'
@@ -78,10 +75,7 @@ export default function SearchResults({
                         variant="body2"
                         sx={{ fontWeight: 500 }}
                         dangerouslySetInnerHTML={{
-                          __html: highlightMatch(
-                            result.formatted_address,
-                            searchQuery
-                          ),
+                          __html: highlightMatch(result.formatted_address, searchQuery),
                         }}
                       />
                     }
@@ -94,4 +88,4 @@ export default function SearchResults({
       )}
     </Paper>
   );
-}
+};

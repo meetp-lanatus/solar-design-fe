@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router';
 import { isAuthenticated } from '../utils/auth.utils';
 
-const PublicRoute = ({ children }) => {
+export const PublicRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const location = useLocation();
@@ -67,5 +67,3 @@ const PublicRoute = ({ children }) => {
 
   return children;
 };
-
-export default PublicRoute;

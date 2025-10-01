@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAuthUser, isAuthenticated } from '../utils/auth.utils';
 import { Box, CircularProgress, Container, Typography } from '@mui/material';
 
-const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const location = useLocation();
@@ -74,5 +74,3 @@ const ProtectedRoute = ({ children }) => {
 
   return children;
 };
-
-export default ProtectedRoute;

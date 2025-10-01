@@ -1,12 +1,12 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
 
-export default function SelectedLocation({
+export const SelectedLocation = ({
   selectedResult,
   selectedAddress,
   latInput,
   lngInput,
   onClear,
-}) {
+}) => {
   if (!selectedResult) return null;
 
   return (
@@ -28,10 +28,7 @@ export default function SelectedLocation({
           mb: 1.5,
         }}
       >
-        <Typography
-          variant="subtitle2"
-          sx={{ fontWeight: 600, color: '#0c4a6e' }}
-        >
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#0c4a6e' }}>
           Selected Location
         </Typography>
         <Button
@@ -49,10 +46,7 @@ export default function SelectedLocation({
       </Box>
 
       <Box sx={{ mb: 1.5 }}>
-        <Typography
-          variant="body2"
-          sx={{ color: '#0c4a6e', lineHeight: 1.4, fontWeight: 500 }}
-        >
+        <Typography variant="body2" sx={{ color: '#0c4a6e', lineHeight: 1.4, fontWeight: 500 }}>
           {selectedResult.formatted_address}
         </Typography>
       </Box>
@@ -71,34 +65,22 @@ export default function SelectedLocation({
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <Typography
-            variant="caption"
-            sx={{ color: '#0369a1', fontWeight: 600 }}
-          >
+          <Typography variant="caption" sx={{ color: '#0369a1', fontWeight: 600 }}>
             Latitude
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: '#0c4a6e', fontWeight: 500 }}
-          >
+          <Typography variant="body2" sx={{ color: '#0c4a6e', fontWeight: 500 }}>
             {selectedAddress?.lat?.toFixed(6) || latInput}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <Typography
-            variant="caption"
-            sx={{ color: '#0369a1', fontWeight: 600 }}
-          >
+          <Typography variant="caption" sx={{ color: '#0369a1', fontWeight: 600 }}>
             Longitude
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: '#0c4a6e', fontWeight: 500 }}
-          >
+          <Typography variant="body2" sx={{ color: '#0c4a6e', fontWeight: 500 }}>
             {selectedAddress?.lng?.toFixed(6) || lngInput}
           </Typography>
         </Box>
       </Box>
     </Paper>
   );
-}
+};

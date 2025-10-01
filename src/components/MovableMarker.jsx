@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Marker } from 'react-leaflet';
 
-export default function MovableMarker({ position, onPositionChange }) {
+export const MovableMarker = ({ position, onPositionChange }) => {
   const markerRef = useRef(null);
 
   const eventHandlers = useMemo(
@@ -46,4 +46,4 @@ export default function MovableMarker({ position, onPositionChange }) {
       ref={markerRef}
     />
   );
-}
+};

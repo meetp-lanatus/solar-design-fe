@@ -1,14 +1,14 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Box, Button, Paper, Typography } from '@mui/material';
 
-export default function StepperHeader({
+export const StepperHeader = ({
   steps,
   activeStep,
   canProceedToStep1,
   canProceedToStep2,
   onNext,
   onBack,
-}) {
+}) => {
   return (
     <Paper
       elevation={1}
@@ -27,10 +27,7 @@ export default function StepperHeader({
         }}
       >
         <Box sx={{ p: 2 }}>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}
-          >
+          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
             Create Site
           </Typography>
         </Box>
@@ -51,10 +48,7 @@ export default function StepperHeader({
               const isDone = index < activeStep;
 
               return (
-                <Box
-                  key={label}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-                >
+                <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Box
                     sx={{
                       width: 28,
@@ -68,14 +62,12 @@ export default function StepperHeader({
                       border: 2,
                       ...(isDone
                         ? {
-                            backgroundColor: 'primary.main',
-                            borderColor: 'primary.main',
+                            backgroundColor: 'secondary.main',
                             color: 'white',
                           }
                         : isActive
                           ? {
                               backgroundColor: 'primary.main',
-                              borderColor: 'primary.main',
                               color: 'white',
                             }
                           : {
@@ -91,11 +83,7 @@ export default function StepperHeader({
                     variant="body2"
                     sx={{
                       fontWeight: isActive ? 700 : 500,
-                      color: isActive
-                        ? 'primary.main'
-                        : isDone
-                          ? 'primary.dark'
-                          : 'text.secondary',
+                      color: isActive ? 'primary.main' : isDone ? 'primary.dark' : 'text.secondary',
                       fontSize: '0.875rem',
                     }}
                   >
@@ -107,7 +95,6 @@ export default function StepperHeader({
                         width: 40,
                         height: 2,
                         backgroundColor: isDone ? 'primary.main' : 'grey.300',
-                        ml: 2,
                         borderRadius: 1,
                       }}
                     />
@@ -131,8 +118,7 @@ export default function StepperHeader({
             variant="contained"
             onClick={onNext}
             disabled={
-              (activeStep === 0 && !canProceedToStep1) ||
-              (activeStep === 1 && !canProceedToStep2)
+              (activeStep === 0 && !canProceedToStep1) || (activeStep === 1 && !canProceedToStep2)
             }
             endIcon={<ArrowForward />}
             size="small"
@@ -143,4 +129,4 @@ export default function StepperHeader({
       </Box>
     </Paper>
   );
-}
+};

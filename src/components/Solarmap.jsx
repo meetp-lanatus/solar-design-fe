@@ -1,10 +1,10 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
-import MovableMarker from './MovableMarker';
+import { MovableMarker } from './MovableMarker';
 import { OverlaysManager } from './OverlaysManager';
 
-export default function SolarMap({ selectedAddress }) {
+export const SolarMap = ({ selectedAddress }) => {
   const [userLocation, setUserLocation] = useState(null);
 
   const getUserLocation = () => {
@@ -118,11 +118,9 @@ export default function SolarMap({ selectedAddress }) {
         <MovableMarker
           key={`marker-${marker.id}-${index}`}
           position={marker}
-          onPositionChange={(newPosition) =>
-            updateMarker(marker.id, newPosition)
-          }
+          onPositionChange={(newPosition) => updateMarker(marker.id, newPosition)}
         />
       ))}
     </MapContainer>
   );
-}
+};
