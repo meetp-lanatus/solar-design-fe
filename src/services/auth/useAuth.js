@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { getAuthUser, isAuthenticated } from '../../utils/auth.utils';
 import { clearAuthCookies, setAuthCookies } from '../../utils/cookie.utils';
-import { postChangePassword, postForgotPassword, postLogin, postRefreshToken, postResetPassword } from './auth.api';
+import { getMe, postLogin, postRefreshToken } from './auth.api';
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -15,12 +15,15 @@ export const useLogin = () => {
         throw new Error('Invalid response structure');
       }
 
-      const { accessToken, refreshToken, expiresIn } = result;
+      const { accessToken, refreshToken, expiresIn } = result.data || result;
 
+      setAuthCookies(accessToken, refreshToken, expiresIn, {});
+
+      const meResponse = await getMe();
       const userData = {
-        id: result.data.id || result.user?.id || 'user',
-        email: result.data.email || result.user?.email || data.email,
-        name: result.data.name || result.user?.name || data.email,
+        id: meResponse.data?.id || 'user',
+        email: meResponse.data?.email || data.email,
+        name: meResponse.data?.name || `${meResponse.data?.firstName || ''} ${meResponse.data?.lastName || ''}`.trim() || data.email,
       };
 
       setAuthCookies(accessToken, refreshToken, expiresIn, userData);
@@ -88,10 +91,12 @@ export const useGoogleCallback = () => {
 
   return useMutation({
     mutationFn: async ({ token, expiresIn, refreshToken }) => {
+      setAuthCookies(token, refreshToken, expiresIn, {});
+      const meResponse = await getMe();
       const userData = {
-        id: 'google-user',
-        email: 'user@gmail.com',
-        name: 'Google User',
+        id: meResponse.data?.id || 'user',
+        email: meResponse.data?.email || '',
+        name: meResponse.data?.name || `${meResponse.data?.firstName || ''} ${meResponse.data?.lastName || ''}`.trim() || '',
       };
 
       setAuthCookies(token, refreshToken, expiresIn, userData);

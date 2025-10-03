@@ -27,7 +27,7 @@ export const SignIn = () => {
   const onSubmit = async (data) => {
     try {
       const result = await signIn(data.email, data.password);
-      if (result.status) {
+      if (result.success) {
         window.location.href = '/';
       } else {
         toast.error('Sign in failed: ' + result.error);
@@ -59,7 +59,7 @@ export const SignIn = () => {
         px: { xs: 2, sm: 3, lg: 4 },
       }}
     >
-      <Container maxWidth='sm'>
+      <Container maxWidth="sm">
         <Card
           sx={{
             borderRadius: 4,
@@ -87,38 +87,38 @@ export const SignIn = () => {
                 <BoltIcon sx={{ color: 'white', fontSize: 24 }} />
               </Box>
               <Typography
-                variant='h4'
-                component='h1'
+                variant="h4"
+                component="h1"
                 sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}
               >
                 Solar Designer
               </Typography>
-              <Typography variant='body1' color='text.secondary'>
+              <Typography variant="body1" color="text.secondary">
                 Design your perfect solar solution
               </Typography>
             </Box>
 
             <Box sx={{ mb: 3 }}>
               <Typography
-                variant='h5'
-                component='h2'
+                variant="h5"
+                component="h2"
                 sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}
               >
                 Welcome back
               </Typography>
-              <Typography variant='body2' color='text.secondary'>
+              <Typography variant="body2" color="text.secondary">
                 Sign in to your account to continue
               </Typography>
             </Box>
 
-            <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ mb: 3 }}>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mb: 3 }}>
               <Box sx={{ mb: 2 }}>
                 <TextField
                   fullWidth
-                  id='email'
-                  type='email'
-                  label='Email address'
-                  autoComplete='email'
+                  id="email"
+                  type="email"
+                  label="Email address"
+                  autoComplete="email"
                   {...register('email', {
                     required: 'Email is required',
                     pattern: {
@@ -128,7 +128,7 @@ export const SignIn = () => {
                   })}
                   error={!!errors.email}
                   helperText={errors.email?.message}
-                  placeholder='Enter your email'
+                  placeholder="Enter your email"
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'grey.50',
@@ -143,10 +143,10 @@ export const SignIn = () => {
               <Box sx={{ mb: 2 }}>
                 <TextField
                   fullWidth
-                  id='password'
-                  type='password'
-                  label='Password'
-                  autoComplete='current-password'
+                  id="password"
+                  type="password"
+                  label="Password"
+                  autoComplete="current-password"
                   {...register('password', {
                     required: 'Password is required',
                     minLength: {
@@ -156,7 +156,7 @@ export const SignIn = () => {
                   })}
                   error={!!errors.password}
                   helperText={errors.password?.message}
-                  placeholder='Enter your password'
+                  placeholder="Enter your password"
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'grey.50',
@@ -170,8 +170,8 @@ export const SignIn = () => {
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
                 <Typography
-                  component='a'
-                  href='#'
+                  component="a"
+                  href="#"
                   sx={{
                     fontSize: '0.875rem',
                     fontWeight: 500,
@@ -187,9 +187,9 @@ export const SignIn = () => {
               </Box>
 
               <Button
-                type='submit'
+                type="submit"
                 fullWidth
-                variant='contained'
+                variant="contained"
                 disabled={isLoading}
                 sx={{
                   py: 1.5,
@@ -225,7 +225,7 @@ export const SignIn = () => {
                   px: 2,
                 }}
               >
-                <Typography variant='body2' color='text.secondary'>
+                <Typography variant="body2" color="text.secondary">
                   Or continue with
                 </Typography>
               </Box>
@@ -235,7 +235,7 @@ export const SignIn = () => {
               onClick={handleGoogleSignIn}
               disabled={isLoading}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               sx={{
                 py: 1.5,
                 borderColor: 'grey.300',
@@ -251,9 +251,9 @@ export const SignIn = () => {
               }}
             >
               <Box
-                component='img'
+                component="img"
                 src={GoogleIcon}
-                alt='Google Logo'
+                alt="Google Logo"
                 sx={{ width: 20, height: 20, mr: 1.5 }}
               />
               Continue with Google

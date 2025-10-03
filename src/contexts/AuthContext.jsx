@@ -44,10 +44,8 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       try {
         const authenticated = isAuthenticated();
-        if (!authenticated) {
-          if (getCookie(USER_KEY) || getCookie(ACCESS_TOKEN_KEY)) {
-            clearAuthCookies();
-          }
+        if (!authenticated && (getCookie(USER_KEY) || getCookie(ACCESS_TOKEN_KEY))) {
+          clearAuthCookies();
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
@@ -79,12 +77,6 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     try {
       const redirectUri = import.meta.env.VITE_PUBLIC_BACKEND_URL + `/auth/google/login`;
-
-      if (!redirectUri) {
-        console.error('Google OAuth redirect URI not set.');
-        return { success: false, error: 'OAuth configuration error' };
-      }
-
       window.location.replace(redirectUri);
       return { success: true };
     } catch (error) {
