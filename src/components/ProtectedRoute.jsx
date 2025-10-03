@@ -43,7 +43,7 @@ export const ProtectedRoute = ({ children }) => {
           backgroundColor: 'grey.50',
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth='sm'>
           <Box sx={{ textAlign: 'center' }}>
             <CircularProgress
               size={48}
@@ -53,13 +53,13 @@ export const ProtectedRoute = ({ children }) => {
               }}
             />
             <Typography
-              variant="h6"
-              component="h2"
+              variant='h6'
+              component='h2'
               sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}
             >
               Loading...
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='body2' color='text.secondary'>
               Please wait while we verify your authentication...
             </Typography>
           </Box>
@@ -69,7 +69,7 @@ export const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuth) {
-    return <Navigate to="/auth/signin" state={{ from: location }} replace />;
+    return <Navigate to='/auth/signin' state={{ from: location }} replace />;
   }
 
   return children;

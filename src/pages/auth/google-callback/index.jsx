@@ -67,7 +67,7 @@ export const GoogleCallback = () => {
           backgroundColor: 'grey.50',
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth='sm'>
           <Box sx={{ textAlign: 'center' }}>
             <CircularProgress
               size={48}
@@ -77,13 +77,13 @@ export const GoogleCallback = () => {
               }}
             />
             <Typography
-              variant="h6"
-              component="h2"
+              variant='h6'
+              component='h2'
               sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}
             >
               Processing Google Authentication
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='body2' color='text.secondary'>
               Please wait while we complete your sign-in...
             </Typography>
           </Box>
@@ -103,18 +103,18 @@ export const GoogleCallback = () => {
           backgroundColor: 'grey.50',
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth='sm'>
           <Card sx={{ textAlign: 'center' }}>
             <CardContent sx={{ p: 3 }}>
-              <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2, textAlign: 'left' }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+              <Alert severity='error' icon={<ErrorIcon />} sx={{ mb: 2, textAlign: 'left' }}>
+                <Typography variant='subtitle2' sx={{ fontWeight: 600, mb: 1 }}>
                   Authentication Failed
                 </Typography>
-                <Typography variant="body2">{error}</Typography>
+                <Typography variant='body2'>{error}</Typography>
               </Alert>
               <Button
                 onClick={() => (window.location.href = '/auth/signin')}
-                variant="contained"
+                variant='contained'
                 fullWidth
                 sx={{
                   py: 1.5,

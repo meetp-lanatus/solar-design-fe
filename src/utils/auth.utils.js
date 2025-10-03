@@ -1,9 +1,5 @@
 import { getCookie } from './cookie.utils';
-import {
-  ACCESS_TOKEN_KEY,
-  REFRESH_TOKEN_KEY,
-  USER_KEY,
-} from '../consts/cookieConst';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY } from '../constants';
 
 export const extractGoogleCallbackParams = () => {
   const urlParams = new URLSearchParams(window.location.search);

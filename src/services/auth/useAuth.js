@@ -1,13 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import {
-  postChangePassword,
-  postForgotPassword,
-  postLogin,
-  postResetPassword,
-} from '../services/auth/auth.api';
-import { getAuthUser, isAuthenticated } from '../utils/auth.utils';
-import { clearAllCookies } from '../utils/cookie.utils';
+import { postChangePassword, postForgotPassword, postLogin, postResetPassword } from './auth.api';
+import { getAuthUser, isAuthenticated } from '../../utils/auth.utils';
+import { clearAllCookies } from '../../utils/cookie.utils';
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -15,13 +10,10 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (data) => {
       const result = await postLogin(data);
-      const { setCookie } = await import('../utils/cookie.utils');
-      const {
-        ACCESS_TOKEN_KEY,
-        REFRESH_TOKEN_KEY,
-        USER_KEY,
-        refreshTokenExpiry,
-      } = await import('../consts/cookieConst');
+      const { setCookie } = await import('../../utils/cookie.utils');
+      const { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY, refreshTokenExpiry } = await import(
+        '../../constants'
+      );
 
       const expiresInDays = parseInt(result.expiresIn) / (24 * 60 * 60);
       const refreshTokenExpiryDays = refreshTokenExpiry / (24 * 60 * 60);
@@ -70,9 +62,7 @@ export const useForgotPassword = () => {
     },
     onError: (error) => {
       console.error('Forgot password error:', error);
-      toast.error(
-        'Failed to send reset email: ' + (error.message || 'Unknown error')
-      );
+      toast.error('Failed to send reset email: ' + (error.message || 'Unknown error'));
     },
   });
 };
@@ -85,9 +75,7 @@ export const useChangePassword = () => {
     },
     onError: (error) => {
       console.error('Change password error:', error);
-      toast.error(
-        'Failed to change password: ' + (error.message || 'Unknown error')
-      );
+      toast.error('Failed to change password: ' + (error.message || 'Unknown error'));
     },
   });
 };
@@ -100,9 +88,7 @@ export const useResetPassword = () => {
     },
     onError: (error) => {
       console.error('Reset password error:', error);
-      toast.error(
-        'Failed to reset password: ' + (error.message || 'Unknown error')
-      );
+      toast.error('Failed to reset password: ' + (error.message || 'Unknown error'));
     },
   });
 };
@@ -112,13 +98,10 @@ export const useGoogleCallback = () => {
 
   return useMutation({
     mutationFn: async ({ token, expiresIn, refreshToken }) => {
-      const { setCookie } = await import('../utils/cookie.utils');
-      const {
-        ACCESS_TOKEN_KEY,
-        REFRESH_TOKEN_KEY,
-        USER_KEY,
-        refreshTokenExpiry,
-      } = await import('../consts/cookieConst');
+      const { setCookie } = await import('../../utils/cookie.utils');
+      const { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY, refreshTokenExpiry } = await import(
+        '../../constants'
+      );
 
       const expiresInDays = parseInt(expiresIn) / (24 * 60 * 60);
       const refreshTokenExpiryDays = refreshTokenExpiry / (24 * 60 * 60);
@@ -157,9 +140,7 @@ export const useGoogleCallback = () => {
     },
     onError: (error) => {
       console.error('Google callback error:', error);
-      toast.error(
-        'Google authentication failed: ' + (error.message || 'Unknown error')
-      );
+      toast.error('Google authentication failed: ' + (error.message || 'Unknown error'));
     },
   });
 };

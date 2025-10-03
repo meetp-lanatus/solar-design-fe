@@ -40,13 +40,13 @@ export const SearchResults = ({
       {isSearching ? (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2 }}>
           <CircularProgress size={16} />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             Loading…
           </Typography>
         </Box>
       ) : searchResults.length === 0 ? (
         <Box sx={{ p: 2, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             No results found
           </Typography>
         </Box>
@@ -72,7 +72,7 @@ export const SearchResults = ({
                   <ListItemText
                     primary={
                       <Typography
-                        variant="body2"
+                        variant='body2'
                         sx={{ fontWeight: 500 }}
                         dangerouslySetInnerHTML={{
                           __html: highlightMatch(result.formatted_address, searchQuery),

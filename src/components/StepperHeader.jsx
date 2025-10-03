@@ -27,14 +27,14 @@ export const StepperHeader = ({
         }}
       >
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+          <Typography variant='h6' sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
             Create Site
           </Typography>
         </Box>
 
         <Box
-          component="nav"
-          aria-label="Progress"
+          component='nav'
+          aria-label='Progress'
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -80,7 +80,7 @@ export const StepperHeader = ({
                     {index + 1}
                   </Box>
                   <Typography
-                    variant="body2"
+                    variant='body2'
                     sx={{
                       fontWeight: isActive ? 700 : 500,
                       color: isActive ? 'primary.main' : isDone ? 'primary.dark' : 'text.secondary',
@@ -106,22 +106,22 @@ export const StepperHeader = ({
         </Box>
         <Box sx={{ display: 'flex', gap: 1, p: 2 }}>
           <Button
-            variant="outlined"
+            variant='outlined'
             onClick={onBack}
             disabled={activeStep === 0}
             startIcon={<ArrowBack />}
-            size="small"
+            size='small'
           >
             Back
           </Button>
           <Button
-            variant="contained"
+            variant='contained'
             onClick={onNext}
             disabled={
               (activeStep === 0 && !canProceedToStep1) || (activeStep === 1 && !canProceedToStep2)
             }
             endIcon={<ArrowForward />}
-            size="small"
+            size='small'
           >
             {activeStep === steps.length - 1 ? 'Complete' : 'Next'}
           </Button>

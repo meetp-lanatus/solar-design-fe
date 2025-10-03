@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import {
-  ACCESS_TOKEN_KEY,
-  REFRESH_TOKEN_KEY,
-  USER_KEY,
-  refreshTokenExpiry,
-} from '../consts/cookieConst';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY, refreshTokenExpiry } from '../constants';
 import { clearAllCookies, getCookie, setCookie } from './cookie.utils';
 
 const backEndURL = import.meta.env.VITE_PUBLIC_BACKEND_URL;
@@ -53,11 +48,9 @@ const handleRefreshTokenCase = async () => {
       setCookie(REFRESH_TOKEN_KEY, newRefreshToken, {
         expires: refreshTokenExpiryDays,
       });
-      setCookie(
-        USER_KEY,
-        JSON.stringify({ ...userData, accessToken: newAccessToken }),
-        { expires: refreshTokenExpiryDays }
-      );
+      setCookie(USER_KEY, JSON.stringify({ ...userData, accessToken: newAccessToken }), {
+        expires: refreshTokenExpiryDays,
+      });
     }
 
     isRefreshing = false;
@@ -76,15 +69,9 @@ const handleRefreshTokenCase = async () => {
 axiosInstance.interceptors.request.use(
   async (config) => {
     let token = getCookie(ACCESS_TOKEN_KEY);
-    const user = getCookie(USER_KEY);
-    const userData = user ? JSON.parse(user) : {};
-    let tenantId = userData?.tenantId || 1;
+    let tenantId = 1;
 
-    if (
-      !token &&
-      window.location.pathname !== '/auth/signin' &&
-      !isRefreshing
-    ) {
+    if (!token && window.location.pathname !== '/auth/signin' && !isRefreshing) {
       await handleRefreshTokenCase();
       token = getCookie(ACCESS_TOKEN_KEY);
       tenantId = JSON.parse(getCookie(USER_KEY) ?? '{}')?.tenantId ?? 1;

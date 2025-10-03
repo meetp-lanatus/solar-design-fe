@@ -261,14 +261,14 @@ export const Sidebar = ({ onAddressSelect, selectedAddress }) => {
       }}
     >
       <Box>
-        <Typography variant="h5" component="h2" sx={{ fontWeight: 700, color: 'text.primary' }}>
+        <Typography variant='h5' component='h2' sx={{ fontWeight: 700, color: 'text.primary' }}>
           Map Manager
         </Typography>
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
+          <Typography variant='subtitle2' sx={{ fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
             Choose Input Mode
           </Typography>
           <ToggleButtonGroup
@@ -279,7 +279,7 @@ export const Sidebar = ({ onAddressSelect, selectedAddress }) => {
                 setIsPlaceMode(newMode);
               }
             }}
-            size="small"
+            size='small'
             fullWidth
             sx={{
               gap: 2,
@@ -313,7 +313,7 @@ export const Sidebar = ({ onAddressSelect, selectedAddress }) => {
         <Divider />
         {isPlaceMode ? (
           <Box
-            className="search-container"
+            className='search-container'
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <SearchInput

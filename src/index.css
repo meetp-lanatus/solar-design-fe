@@ -25,8 +25,7 @@
 }
 
 .leaflet-glow-box {
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4))
-    drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
 }
 
 /* Faulty panels – shiny glow */
@@ -50,8 +49,7 @@
 }
 
 .overlay-draggable:hover {
-  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))
-    drop-shadow(0 0 16px rgba(34, 197, 94, 0.3));
+  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.3));
 }
 
 /* Custom marker styles */

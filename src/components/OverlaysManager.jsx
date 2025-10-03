@@ -6,14 +6,8 @@ export const OverlaysManager = () => {
   // We attach a function on window so Sidebar can trigger it without prop drilling
   window.__solarMapAddOverlayAtCenter__ = (widthMeters, heightMeters) => {
     const c = map.getCenter();
-    const w =
-      widthMeters === '' || widthMeters == null
-        ? undefined
-        : parseFloat(widthMeters);
-    const h =
-      heightMeters === '' || heightMeters == null
-        ? undefined
-        : parseFloat(heightMeters);
+    const w = widthMeters === '' || widthMeters == null ? undefined : parseFloat(widthMeters);
+    const h = heightMeters === '' || heightMeters == null ? undefined : parseFloat(heightMeters);
 
     // If a small overlay size is specified, auto-zoom so the shape is clearly visible
     try {
@@ -29,10 +23,7 @@ export const OverlaysManager = () => {
           lat: center.lat,
           lng: center.lng + dLngFor1m,
         });
-        const pxPerMeter = Math.max(
-          0.0001,
-          Math.hypot(p1.x - p0.x, p1.y - p0.y)
-        );
+        const pxPerMeter = Math.max(0.0001, Math.hypot(p1.x - p0.x, p1.y - p0.y));
 
         const targetPx = 160; // aim for ~160px for the longest side
         const currentPx = meters * pxPerMeter;
@@ -68,7 +59,5 @@ export const OverlaysManager = () => {
     } catch (_) {}
   };
 
-  return (
-    <>{/* Floating controls removed; Sidebar drives overlay creation */}</>
-  );
+  return <>{/* Floating controls removed; Sidebar drives overlay creation */}</>;
 };

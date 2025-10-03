@@ -4,12 +4,13 @@ import { PublicRoute } from './components/PublicRoute';
 import { Site } from './components/Site';
 import { GoogleCallback } from './pages/auth/google-callback';
 import { Signin } from './pages/auth/signin';
+import { CustomersPage } from './pages/customers';
 
 function App() {
   return (
     <Routes>
       <Route
-        path="/"
+        path='/'
         element={
           <ProtectedRoute>
             <Site />
@@ -17,15 +18,23 @@ function App() {
         }
       />
       <Route
-        path="/auth/signin"
+        path='/auth/signin'
         element={
           <PublicRoute>
             <Signin />
           </PublicRoute>
         }
       />
+      <Route
+        path='/customers'
+        element={
+          <ProtectedRoute>
+            <CustomersPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/auth/api/callback/google" element={<GoogleCallback />} />
+      <Route path='/auth/api/callback/google' element={<GoogleCallback />} />
     </Routes>
   );
 }

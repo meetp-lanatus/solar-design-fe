@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { ACCESS_TOKEN_KEY, USER_KEY } from '../consts/cookieConst';
-import { useGoogleCallback, useLogin, useLogout } from '../hooks/useAuth';
+import { ACCESS_TOKEN_KEY, USER_KEY } from '../constants';
+import { useGoogleCallback, useLogin, useLogout } from '../services/auth/useAuth';
 import { getAuthUser, isAuthenticated } from '../utils/auth.utils';
 import { clearAllCookies, getCookie } from '../utils/cookie.utils';
 
@@ -78,8 +78,7 @@ export const AuthProvider = ({ children }) => {
 
   const signInWithGoogle = async () => {
     try {
-      const redirectUri =
-        import.meta.env.VITE_PUBLIC_BACKEND_URL + `/auth/google/login`;
+      const redirectUri = import.meta.env.VITE_PUBLIC_BACKEND_URL + `/auth/google/login`;
 
       if (!redirectUri) {
         console.error('Google OAuth redirect URI not set.');
@@ -90,9 +89,7 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Google sign in error:', error);
-      toast.error(
-        'Google sign in failed: ' + (error.message || 'Unknown error')
-      );
+      toast.error('Google sign in failed: ' + (error.message || 'Unknown error'));
       return {
         success: false,
         error: error.message || 'Google sign in failed',

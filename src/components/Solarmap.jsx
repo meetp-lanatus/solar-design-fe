@@ -105,7 +105,7 @@ export const SolarMap = ({ selectedAddress }) => {
       style={{ height: '100vh', width: '100%' }}
     >
       <TileLayer
-        url="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+        url='https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
         subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
         attribution='Imagery © <a href="https://maps.google.com/">Google</a>'
         maxZoom={21}

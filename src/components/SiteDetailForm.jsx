@@ -16,13 +16,6 @@ import {
   Typography,
 } from '@mui/material';
 
-const staticCustomerData = {
-  name: 'Meet Patel',
-  email: 'meet.p@lanatusystems.com',
-  phone: '+91 9874563210',
-  company: 'Nes Solar Private LTD.',
-};
-
 export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
   const handleInputChange = (field, value) => {
     onFormChange({ ...formData, [field]: value });
@@ -36,7 +29,7 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
     <Box sx={{ p: { xs: 2, sm: 3, md: 5 }, maxWidth: 1300, mx: 'auto' }}>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+        <Typography variant='h4' sx={{ fontWeight: 700, mb: 1 }}>
           Site Details
         </Typography>
       </Box>
@@ -55,35 +48,29 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
           >
             <Grid container spacing={3}>
               <Grid item size={{ xs: 12 }}>
-                <FormControl component="fieldset">
+                <FormControl component='fieldset'>
                   <RadioGroup
                     value={formData.siteType || ''}
-                    onChange={(e) =>
-                      handleInputChange('siteType', e.target.value)
-                    }
+                    onChange={(e) => handleInputChange('siteType', e.target.value)}
                     row
                     sx={{ gap: 2 }}
                   >
                     <FormControlLabel
-                      value="residential"
+                      value='residential'
                       control={<Radio />}
                       label={
-                        <Box
-                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                        >
-                          <Home color="primary" />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Home color='primary' />
                           <Typography>Residential</Typography>
                         </Box>
                       }
                     />
                     <FormControlLabel
-                      value="commercial"
+                      value='commercial'
                       control={<Radio />}
                       label={
-                        <Box
-                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                        >
-                          <Business color="primary" />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Business color='primary' />
                           <Typography>Commercial</Typography>
                         </Box>
                       }
@@ -94,25 +81,21 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
               <Grid item size={{ xs: 12 }}>
                 <TextField
                   fullWidth
-                  label="Site Name"
+                  label='Site Name'
                   value={formData.siteName || ''}
-                  onChange={(e) =>
-                    handleInputChange('siteName', e.target.value)
-                  }
-                  placeholder="e.g., Johnson Residence"
-                  size="large"
+                  onChange={(e) => handleInputChange('siteName', e.target.value)}
+                  placeholder='e.g., Johnson Residence'
+                  size='large'
                 />
               </Grid>
 
               <Grid item size={{ xs: 12 }}>
                 <TextField
                   fullWidth
-                  label="Customer Name"
+                  label='Customer Name'
                   value={formData.customer || ''}
-                  onChange={(e) =>
-                    handleInputChange('customer', e.target.value)
-                  }
-                  placeholder="e.g., Sarah Johnson"
+                  onChange={(e) => handleInputChange('customer', e.target.value)}
+                  placeholder='e.g., Sarah Johnson'
                 />
               </Grid>
 
@@ -121,14 +104,12 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                   <InputLabel>Status</InputLabel>
                   <Select
                     value={formData.status || ''}
-                    onChange={(e) =>
-                      handleInputChange('status', e.target.value)
-                    }
-                    label="Status"
+                    onChange={(e) => handleInputChange('status', e.target.value)}
+                    label='Status'
                   >
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                    <MenuItem value="pending">Pending</MenuItem>
+                    <MenuItem value='active'>Active</MenuItem>
+                    <MenuItem value='inactive'>Inactive</MenuItem>
+                    <MenuItem value='pending'>Pending</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -136,12 +117,10 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
               <Grid item size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
-                  label="Installation Date"
-                  type="date"
+                  label='Installation Date'
+                  type='date'
                   value={formData.installationDate || ''}
-                  onChange={(e) =>
-                    handleInputChange('installationDate', e.target.value)
-                  }
+                  onChange={(e) => handleInputChange('installationDate', e.target.value)}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
@@ -149,25 +128,20 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
               <Grid item size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
-                  label="Estimated Peak Power"
-                  type="number"
+                  label='Estimated Peak Power'
+                  type='number'
                   value={formData.estimatedPeakPowerValue || ''}
-                  onChange={(e) =>
-                    handleInputChange('estimatedPeakPowerValue', e.target.value)
-                  }
-                  placeholder="e.g., 5.5"
+                  onChange={(e) => handleInputChange('estimatedPeakPowerValue', e.target.value)}
+                  placeholder='e.g., 5.5'
                   inputProps={{ step: '0.1' }}
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">
-                        <FormControl variant="standard" sx={{ minWidth: 80 }}>
+                      <InputAdornment position='end'>
+                        <FormControl variant='standard' sx={{ minWidth: 80 }}>
                           <Select
                             value={formData.estimatedPeakPowerUnit || 'kWp'}
                             onChange={(e) =>
-                              handleInputChange(
-                                'estimatedPeakPowerUnit',
-                                e.target.value
-                              )
+                              handleInputChange('estimatedPeakPowerUnit', e.target.value)
                             }
                             sx={{
                               '& .MuiSelect-select': {
@@ -180,15 +154,14 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                               '&:hover .MuiOutlinedInput-notchedOutline': {
                                 border: 'none',
                               },
-                              '&.Mui-focused .MuiOutlinedInput-notchedOutline':
-                                {
-                                  border: 'none',
-                                },
+                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                border: 'none',
+                              },
                             }}
                           >
-                            <MenuItem value="Wp">Wp</MenuItem>
-                            <MenuItem value="kWp">kWp</MenuItem>
-                            <MenuItem value="MWp">MWp</MenuItem>
+                            <MenuItem value='Wp'>Wp</MenuItem>
+                            <MenuItem value='kWp'>kWp</MenuItem>
+                            <MenuItem value='MWp'>MWp</MenuItem>
                           </Select>
                         </FormControl>
                       </InputAdornment>
@@ -200,21 +173,21 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
               <Grid item size={{ xs: 12 }}>
                 <TextField
                   fullWidth
-                  label="Notes"
+                  label='Notes'
                   multiline
                   rows={3}
                   value={formData.notes || ''}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Additional notes or comments..."
+                  placeholder='Additional notes or comments...'
                 />
               </Grid>
 
               <Grid item size={{ xs: 12 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
+                    variant='contained'
+                    color='primary'
+                    size='large'
                     onClick={handleSubmit}
                     sx={{
                       textTransform: 'none',
@@ -249,8 +222,8 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
             {/* Address */}
             <Box>
               <Typography
-                variant="subtitle2"
-                color="text.secondary"
+                variant='subtitle2'
+                color='text.secondary'
                 sx={{ fontWeight: 600, mb: 1 }}
               >
                 Selected Address
@@ -274,18 +247,17 @@ export const SiteDetailForm = ({ formData, onFormChange, selectedAddress }) => {
                         mb: 1,
                       }}
                     >
-                      <LocationOn color="primary" fontSize="small" />
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      <LocationOn color='primary' fontSize='small' />
+                      <Typography variant='body2' sx={{ fontWeight: 600 }}>
                         {selectedAddress.formatted_address}
                       </Typography>
                     </Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Lat {selectedAddress.lat?.toFixed(5)}, Lon{' '}
-                      {selectedAddress.lng?.toFixed(5)}
+                    <Typography variant='caption' color='text.secondary'>
+                      Lat {selectedAddress.lat?.toFixed(5)}, Lon {selectedAddress.lng?.toFixed(5)}
                     </Typography>
                   </>
                 ) : (
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant='body2' color='text.secondary'>
                     No address selected
                   </Typography>
                 )}
