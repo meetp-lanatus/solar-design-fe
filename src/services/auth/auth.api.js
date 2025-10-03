@@ -5,6 +5,11 @@ export async function postLogin(body) {
   return res;
 }
 
+export async function postRefreshToken(refreshToken) {
+  const res = await axiosInstance.post('/auth/refresh', { refreshToken });
+  return res;
+}
+
 export async function postForgotPassword(body) {
   const res = await axiosInstance.post('/auth/forgot-password', body);
   return res;
@@ -25,12 +30,3 @@ export async function getMe() {
   return res;
 }
 
-export async function refreshAccessToken() {
-  try {
-    const res = await axiosInstance.post('/auth/refresh');
-    return res;
-  } catch (error) {
-    console.error('Token refresh error:', error);
-    throw error;
-  }
-}

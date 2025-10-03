@@ -102,7 +102,7 @@ export const SolarMap = ({ selectedAddress }) => {
       center={getMapCenter()}
       zoom={18}
       maxZoom={21}
-      style={{ height: '100vh', width: '100%' }}
+      style={{ height: '100%', width: '100%' }}
     >
       <TileLayer
         url='https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'

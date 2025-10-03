@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { postChangePassword, postForgotPassword, postLogin, postResetPassword } from './auth.api';
 import { getAuthUser, isAuthenticated } from '../../utils/auth.utils';
-import { clearAllCookies } from '../../utils/cookie.utils';
+import { clearAuthCookies, setAuthCookies } from '../../utils/cookie.utils';
+import { postChangePassword, postForgotPassword, postLogin, postRefreshToken, postResetPassword } from './auth.api';
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -10,42 +10,32 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (data) => {
       const result = await postLogin(data);
-      const { setCookie } = await import('../../utils/cookie.utils');
-      const { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY, refreshTokenExpiry } = await import(
-        '../../constants'
-      );
 
-      const expiresInDays = parseInt(result.expiresIn) / (24 * 60 * 60);
-      const refreshTokenExpiryDays = refreshTokenExpiry / (24 * 60 * 60);
+      if (!result) {
+        throw new Error('Invalid response structure');
+      }
 
-      setCookie(ACCESS_TOKEN_KEY, result.accessToken, {
-        expires: expiresInDays,
-      });
-      setCookie(REFRESH_TOKEN_KEY, result.refreshToken, {
-        expires: refreshTokenExpiryDays,
-      });
+      const { accessToken, refreshToken, expiresIn } = result;
 
       const userData = {
-        id: result.id || 'user',
-        email: result.email || '',
-        name: result.name || '',
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        id: result.data.id || result.user?.id || 'user',
+        email: result.data.email || result.user?.email || data.email,
+        name: result.data.name || result.user?.name || data.email,
       };
 
-      setCookie(USER_KEY, JSON.stringify(userData), {
-        expires: refreshTokenExpiryDays,
-      });
+      setAuthCookies(accessToken, refreshToken, expiresIn, userData);
 
-      return result;
+      return {
+        success: true,
+        user: userData,
+        accessToken,
+        refreshToken,
+        expiresIn,
+      };
     },
     onSuccess: (data) => {
-      if (data.success) {
-        queryClient.setQueryData(['auth', 'user'], data.user);
-        toast.success('Successfully signed in!');
-      } else {
-        toast.error(data.error || 'Login failed');
-      }
+      queryClient.setQueryData(['auth', 'user'], data.user);
+      toast.success('Successfully signed in!');
     },
     onError: (error) => {
       console.error('Login error:', error);
@@ -98,30 +88,13 @@ export const useGoogleCallback = () => {
 
   return useMutation({
     mutationFn: async ({ token, expiresIn, refreshToken }) => {
-      const { setCookie } = await import('../../utils/cookie.utils');
-      const { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY, refreshTokenExpiry } = await import(
-        '../../constants'
-      );
-
-      const expiresInDays = parseInt(expiresIn) / (24 * 60 * 60);
-      const refreshTokenExpiryDays = refreshTokenExpiry / (24 * 60 * 60);
-
-      setCookie(ACCESS_TOKEN_KEY, token, { expires: expiresInDays });
-      setCookie(REFRESH_TOKEN_KEY, refreshToken, {
-        expires: refreshTokenExpiryDays,
-      });
-
       const userData = {
         id: 'google-user',
         email: 'user@gmail.com',
         name: 'Google User',
-        accessToken: token,
-        refreshToken: refreshToken,
       };
 
-      setCookie(USER_KEY, JSON.stringify(userData), {
-        expires: refreshTokenExpiryDays,
-      });
+      setAuthCookies(token, refreshToken, expiresIn, userData);
 
       return {
         success: true,
@@ -131,12 +104,8 @@ export const useGoogleCallback = () => {
       };
     },
     onSuccess: (data) => {
-      if (data.success) {
-        queryClient.setQueryData(['auth', 'user'], data.user);
-        toast.success('Successfully signed in with Google!');
-      } else {
-        toast.error(data.error || 'Google authentication failed');
-      }
+      queryClient.setQueryData(['auth', 'user'], data.user);
+      toast.success('Successfully signed in with Google!');
     },
     onError: (error) => {
       console.error('Google callback error:', error);
@@ -160,12 +129,43 @@ export const useAuthUser = () => {
   });
 };
 
+export const useRefreshToken = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (refreshToken) => {
+      const result = await postRefreshToken(refreshToken);
+
+      if (!result.data) {
+        throw new Error('Invalid refresh token response');
+      }
+
+      const { accessToken, refreshToken: newRefreshToken, expiresIn } = result.data;
+      const userData = getAuthUser() || {};
+
+      setAuthCookies(accessToken, newRefreshToken, expiresIn, userData);
+
+      return {
+        success: true,
+        accessToken,
+        refreshToken: newRefreshToken,
+        expiresIn,
+      };
+    },
+    onError: (error) => {
+      console.error('Refresh token error:', error);
+      clearAuthCookies();
+      queryClient.clear();
+    },
+  });
+};
+
 export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      clearAllCookies();
+      clearAuthCookies();
       queryClient.clear();
     },
     onSuccess: () => {

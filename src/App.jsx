@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router';
+import { BaseLayout } from './components/BaseLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { PublicRoute } from './components/PublicRoute';
 import { Site } from './components/Site';
@@ -13,28 +14,27 @@ function App() {
         path='/'
         element={
           <ProtectedRoute>
-            <Site />
+            <BaseLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path='/auth/signin'
-        element={
-          <PublicRoute>
-            <Signin />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path='/customers'
-        element={
-          <ProtectedRoute>
-            <CustomersPage />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route index element={<Site />} />
+        <Route path='customers' element={<CustomersPage />} />
+      </Route>
 
-      <Route path='/auth/api/callback/google' element={<GoogleCallback />} />
+      <Route path='/auth'>
+        <Route
+          index
+          path='signin'
+          element={
+            <PublicRoute>
+              <Signin />
+            </PublicRoute>
+          }
+        />
+
+        <Route path='api/callback/google' element={<GoogleCallback />} />
+      </Route>
     </Routes>
   );
 }

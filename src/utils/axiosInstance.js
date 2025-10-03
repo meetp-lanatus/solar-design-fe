@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY, refreshTokenExpiry } from '../constants';
-import { clearAllCookies, getCookie, setCookie } from './cookie.utils';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY } from '../constants';
+import { getAuthUser } from './auth.utils';
+import { clearAuthCookies, getCookie, setAuthCookies } from './cookie.utils';
 
 const backEndURL = import.meta.env.VITE_PUBLIC_BACKEND_URL;
 
@@ -23,7 +24,7 @@ const handleRefreshTokenCase = async () => {
   const refreshToken = getCookie(REFRESH_TOKEN_KEY);
 
   if (!refreshToken) {
-    clearAllCookies();
+    clearAuthCookies();
     window.location.href = `${window.location.origin}/auth/signin`;
     return;
   }
@@ -35,22 +36,11 @@ const handleRefreshTokenCase = async () => {
       refreshToken,
     });
 
-    const newAccessToken = res?.data?.accessToken;
-    const newRefreshToken = res?.data?.refreshToken;
-    const user = getCookie(USER_KEY);
-    const userData = user ? JSON.parse(user) : {};
+    const { accessToken, refreshToken: newRefreshToken, expiresIn } = res.data.data;
+    const userData = getAuthUser() || {};
 
-    if (newAccessToken) {
-      const expiresInDays = res.data.expiresIn / (24 * 60 * 60);
-      const refreshTokenExpiryDays = refreshTokenExpiry / (24 * 60 * 60);
-
-      setCookie(ACCESS_TOKEN_KEY, newAccessToken, { expires: expiresInDays });
-      setCookie(REFRESH_TOKEN_KEY, newRefreshToken, {
-        expires: refreshTokenExpiryDays,
-      });
-      setCookie(USER_KEY, JSON.stringify({ ...userData, accessToken: newAccessToken }), {
-        expires: refreshTokenExpiryDays,
-      });
+    if (accessToken) {
+      setAuthCookies(accessToken, newRefreshToken, expiresIn, userData);
     }
 
     isRefreshing = false;
@@ -60,7 +50,7 @@ const handleRefreshTokenCase = async () => {
   } catch (err) {
     isRefreshing = false;
     refreshQueue = [];
-    clearAllCookies();
+    clearAuthCookies();
     window.location.href = `${window.location.origin}/auth/signin`;
   }
 };
@@ -114,12 +104,12 @@ axiosInstance.interceptors.response.use(
             return axiosInstance(error.config);
           }
         } catch (refreshError) {
-          clearAllCookies();
+          clearAuthCookies();
           window.location.href = `${window.location.origin}/auth/signin`;
           return Promise.reject(refreshError);
         }
       } else {
-        clearAllCookies();
+        clearAuthCookies();
         window.location.href = `${window.location.origin}/auth/signin`;
       }
     }

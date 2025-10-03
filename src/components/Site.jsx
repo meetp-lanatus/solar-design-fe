@@ -50,8 +50,7 @@ export const Site = () => {
   return (
     <Box
       sx={{
-        height: '100vh',
-        width: '100vw',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',

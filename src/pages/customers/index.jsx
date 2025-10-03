@@ -156,7 +156,6 @@ export const CustomersPage = () => {
           sx={{
             p: 3,
             backgroundColor: 'background.default',
-            minHeight: '100vh',
           }}
         >
           <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -170,7 +169,7 @@ export const CustomersPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ p: 3, backgroundColor: 'background.default', minHeight: '100vh' }}>
+      <Box sx={{ p: 3, backgroundColor: 'background.default' }}>
         <DataTable
           title='Customers'
           data={customerRecords}

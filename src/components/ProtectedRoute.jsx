@@ -1,8 +1,9 @@
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router';
+import { APP_BAR_HEIGHT } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
 import { getAuthUser, isAuthenticated } from '../utils/auth.utils';
-import { Box, CircularProgress, Container, Typography } from '@mui/material';
 
 export const ProtectedRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -36,14 +37,14 @@ export const ProtectedRoute = ({ children }) => {
     return (
       <Box
         sx={{
-          minHeight: '100vh',
+          minHeight: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: 'grey.50',
         }}
       >
-        <Container maxWidth='sm'>
+        <Container maxWidth="sm">
           <Box sx={{ textAlign: 'center' }}>
             <CircularProgress
               size={48}
@@ -53,13 +54,13 @@ export const ProtectedRoute = ({ children }) => {
               }}
             />
             <Typography
-              variant='h6'
-              component='h2'
+              variant="h6"
+              component="h2"
               sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}
             >
               Loading...
             </Typography>
-            <Typography variant='body2' color='text.secondary'>
+            <Typography variant="body2" color="text.secondary">
               Please wait while we verify your authentication...
             </Typography>
           </Box>
@@ -69,7 +70,7 @@ export const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuth) {
-    return <Navigate to='/auth/signin' state={{ from: location }} replace />;
+    return <Navigate to="/auth/signin" state={{ from: location }} replace />;
   }
 
   return children;

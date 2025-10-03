@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { ACCESS_TOKEN_KEY, USER_KEY } from '../constants';
 import { useGoogleCallback, useLogin, useLogout } from '../services/auth/useAuth';
 import { getAuthUser, isAuthenticated } from '../utils/auth.utils';
-import { clearAllCookies, getCookie } from '../utils/cookie.utils';
+import { clearAuthCookies, getCookie } from '../utils/cookie.utils';
 
 const AuthContext = createContext();
 
@@ -46,12 +46,12 @@ export const AuthProvider = ({ children }) => {
         const authenticated = isAuthenticated();
         if (!authenticated) {
           if (getCookie(USER_KEY) || getCookie(ACCESS_TOKEN_KEY)) {
-            clearAllCookies();
+            clearAuthCookies();
           }
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        clearAllCookies();
+        clearAuthCookies();
       } finally {
         setIsInitialized(true);
       }
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (userError && isInitialized) {
-      clearAllCookies();
+      clearAuthCookies();
     }
   }, [userError, isInitialized]);
 
